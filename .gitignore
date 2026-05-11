@@ -1,0 +1,5 @@
+backend/.env
+frontend/.env
+deploy/compose.prod.env
+deploy/backend.prod.env
+backups/

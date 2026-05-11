@@ -1,0 +1,121 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: insightai-bi-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-insightai}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-insightai_bi}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-insightai} -d ${POSTGRES_DB:-insightai_bi}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      args:
+        INSTALL_DEV: "false"
+    container_name: insightai-bi-backend
+    env_file:
+      - ./deploy/backend.prod.env
+    environment:
+      APP_ENV: production
+    volumes:
+      - app_storage:/app/storage
+    depends_on:
+      db:
+        condition: service_healthy
+    command: ["/bin/sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "from urllib.request import urlopen; assert urlopen('http://127.0.0.1:8000/health').status == 200"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_BASE_URL: https://${API_DOMAIN}/api
+        VITE_CLIENT_ERROR_ENDPOINT: ""
+        VITE_SENTRY_DSN: ${VITE_SENTRY_DSN:-}
+        VITE_SENTRY_ENVIRONMENT: ${VITE_SENTRY_ENVIRONMENT:-production}
+        VITE_SENTRY_TRACES_SAMPLE_RATE: ${VITE_SENTRY_TRACES_SAMPLE_RATE:-0}
+    container_name: insightai-bi-frontend
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://127.0.0.1:4173 >/dev/null 2>&1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: insightai-bi-caddy
+    depends_on:
+      frontend:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    environment:
+      APP_DOMAIN: ${APP_DOMAIN}
+      API_DOMAIN: ${API_DOMAIN}
+      ACME_EMAIL: ${ACME_EMAIL}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    restart: unless-stopped
+
+  dashboard-refresh-worker:
+    build:
+      context: ./backend
+      args:
+        INSTALL_DEV: "false"
+    container_name: insightai-bi-dashboard-refresh-worker
+    env_file:
+      - ./deploy/backend.prod.env
+    environment:
+      APP_ENV: production
+    volumes:
+      - app_storage:/app/storage
+    depends_on:
+      db:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    command: ["/bin/sh", "-c", "alembic upgrade head && while true; do python -m app.workers.dashboard_refresh_worker; sleep 60; done"]
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "from datetime import datetime, timezone; from app.core.config import settings; from app.db.session import SessionLocal; from app.models.worker_status import WorkerStatus; import sys; db = SessionLocal(); status = db.get(WorkerStatus, 'dashboard_refresh_worker'); hb = getattr(status, 'last_worker_heartbeat_at', None); hb = hb if hb is None or hb.tzinfo is not None else hb.replace(tzinfo=timezone.utc); ok = bool(hb) and (datetime.now(timezone.utc) - hb).total_seconds() <= settings.worker_heartbeat_timeout_seconds; db.close(); sys.exit(0 if ok else 1)",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  app_storage:
+  caddy_data:
+  caddy_config:
