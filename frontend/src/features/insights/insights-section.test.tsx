@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { InsightsSection } from "@next/features/insights/components/insights-section";
 
@@ -21,6 +21,36 @@ vi.mock("@next/features/dashboards/api", async () => {
   };
 });
 
+vi.mock("@next/features/ai/components/ai-result-chart", () => ({
+  AIResultChart: () => (
+    <div data-testid="ai-result-chart">
+      <span>Suggested visualization</span>
+    </div>
+  ),
+  EmptyChartState: () => <div data-testid="empty-chart-state">Suggested visualization</div>,
+  getChartRenderState: (result: { preferred_chart_type?: string | null; rows?: unknown[]; columns?: string[] }) => {
+    if (result.preferred_chart_type === "table" || !result.rows?.length || !result.columns?.length) {
+      return { status: "unsupported", model: null };
+    }
+    return { status: "supported", model: { type: result.preferred_chart_type ?? "bar" } };
+  },
+}));
+
+vi.mock("@next/features/ai/components/ai-result-table", () => ({
+  AIResultTable: ({
+    title,
+    columns,
+  }: {
+    title?: string;
+    columns: string[];
+  }) => (
+    <div data-testid="ai-result-table">
+      {title ? <span>{title}</span> : null}
+      <span>{columns.join(",")}</span>
+    </div>
+  ),
+}));
+
 import { generateDatasetInsights, getLatestDatasetInsights } from "@next/features/insights/api";
 import { createDashboardWidget, listDashboards } from "@next/features/dashboards/api";
 
@@ -29,6 +59,8 @@ function createTestQueryClient() {
     defaultOptions: {
       queries: {
         retry: false,
+        refetchOnWindowFocus: false,
+        gcTime: 0,
       },
       mutations: {
         retry: false,
@@ -74,6 +106,10 @@ describe("InsightsSection", () => {
         widget_count: 0,
       },
     ]);
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
   });
 
   it("shows empty state when there is no persisted run", async () => {
@@ -123,9 +159,7 @@ describe("InsightsSection", () => {
 
     renderInsightsSection();
 
-    await waitFor(() => {
-      expect(screen.getByText("Revenue increased over time")).toBeInTheDocument();
-    });
+    expect(await screen.findByText("Revenue increased over time")).toBeInTheDocument();
     expect(screen.getByText("Dataset changed since these insights were generated.")).toBeInTheDocument();
     expect(screen.getByText("Metric revenue")).toBeInTheDocument();
     expect(screen.getByText("View supporting SQL")).toBeInTheDocument();
@@ -203,15 +237,11 @@ describe("InsightsSection", () => {
 
     renderInsightsSection();
 
-    await waitFor(() => {
-      expect(screen.getByRole("button", { name: "Generate insights" })).toBeInTheDocument();
-    });
+    expect(await screen.findByRole("button", { name: "Generate insights" })).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "Generate insights" }));
 
-    await waitFor(() => {
-      expect(screen.getByText("Revenue distribution snapshot")).toBeInTheDocument();
-    });
+    expect(await screen.findByText("Revenue distribution snapshot")).toBeInTheDocument();
     expect(generateDatasetInsights).toHaveBeenCalledWith(1);
   });
 
@@ -262,9 +292,7 @@ describe("InsightsSection", () => {
 
     renderInsightsSection();
 
-    await waitFor(() => {
-      expect(screen.getByText("Review score outliers")).toBeInTheDocument();
-    });
+    expect(await screen.findByText("Review score outliers")).toBeInTheDocument();
 
     expect(screen.queryByText("Suggested visualization")).not.toBeInTheDocument();
   });
@@ -344,9 +372,7 @@ describe("InsightsSection", () => {
 
     renderInsightsSection();
 
-    await waitFor(() => {
-      expect(screen.getByText("Channel mix")).toBeInTheDocument();
-    });
+    expect(await screen.findByText("Channel mix")).toBeInTheDocument();
 
     expect(screen.getAllByText("Suggested visualization")).toHaveLength(2);
   });
@@ -396,9 +422,7 @@ describe("InsightsSection", () => {
 
     renderInsightsSection();
 
-    await waitFor(() => {
-      expect(screen.getByText("Executive summary")).toBeInTheDocument();
-    });
+    expect(await screen.findByText("Executive summary")).toBeInTheDocument();
 
     expect(screen.getByText("Revenue is concentrated in Retail and moves in line with order volume.")).toBeInTheDocument();
     expect(screen.getByText("Key findings")).toBeInTheDocument();
@@ -478,15 +502,11 @@ describe("InsightsSection", () => {
 
     renderInsightsSection();
 
-    await waitFor(() => {
-      expect(screen.getByRole("button", { name: "Save to dashboard" })).toBeInTheDocument();
-    });
+    expect(await screen.findByRole("button", { name: "Save to dashboard" })).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "Save to dashboard" }));
 
-    await waitFor(() => {
-      expect(screen.getByRole("button", { name: "Save widget" })).toBeInTheDocument();
-    });
+    expect(await screen.findByRole("button", { name: "Save widget" })).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "Save widget" }));
 
