@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { Alert, AlertTitle, Box, Button, Skeleton, Stack, Typography } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 
-import { SurfaceCard } from "./surface-card";
+import { OpenSection, SectionBlock } from "./surface-card";
 import { tokens } from "@next/theme/tokens";
 
 export function LoadingState({
@@ -13,23 +13,19 @@ export function LoadingState({
   description?: string;
 }) {
   return (
-    <SurfaceCard tone="panel" padding="md">
-      <Stack spacing={1.4}>
+    <SectionBlock eyebrow="Loading" title={title} description={description} divider="top">
+      <Stack spacing={1.25}>
         <Stack spacing={0.7}>
-          <Typography variant="overline" color="text.secondary">
-            Loading
-          </Typography>
-          <Typography variant="h6">{title}</Typography>
-          <Typography variant="body2" color="text.secondary">
-            {description}
-          </Typography>
+          <Skeleton variant="text" height={18} width="20%" />
+          <Skeleton variant="text" height={24} width="42%" />
+          <Skeleton variant="text" height={18} width="72%" />
         </Stack>
-        <Skeleton variant="rounded" height={12} width="28%" />
-        <Skeleton variant="rounded" height={16} />
-        <Skeleton variant="rounded" height={16} width="82%" />
-        <Skeleton variant="rounded" height={140} sx={{ borderRadius: tokens.radius.sm }} />
+        <Skeleton variant="rounded" height={10} width="28%" sx={{ borderRadius: tokens.radius.xs }} />
+        <Skeleton variant="rounded" height={14} sx={{ borderRadius: tokens.radius.xs }} />
+        <Skeleton variant="rounded" height={14} width="82%" sx={{ borderRadius: tokens.radius.xs }} />
+        <Skeleton variant="rounded" height={132} sx={{ borderRadius: tokens.radius.xs }} />
       </Stack>
-    </SurfaceCard>
+    </SectionBlock>
   );
 }
 
@@ -43,27 +39,18 @@ export function EmptyState({
   action?: ReactNode;
 }) {
   return (
-    <SurfaceCard tone="panel" padding="md">
-      <Stack spacing={1.15}>
-        <Typography variant="overline" color="text.secondary">
-          Empty state
-        </Typography>
-        <Typography variant="h6">{title}</Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 680 }}>
-          {description}
-        </Typography>
-        {action ? (
-          <Box
-            sx={{
-              pt: 0.5,
-              borderTop: `1px solid ${alpha(tokens.color.border.strong, 0.24)}`,
-            }}
-          >
-            {action}
-          </Box>
-        ) : null}
-      </Stack>
-    </SurfaceCard>
+    <SectionBlock eyebrow="Empty state" title={title} description={description} divider="top">
+      {action ? (
+        <Box
+          sx={{
+            pt: 0.25,
+            borderTop: `1px solid ${alpha(tokens.color.border.strong, 0.2)}`,
+          }}
+        >
+          {action}
+        </Box>
+      ) : null}
+    </SectionBlock>
   );
 }
 
@@ -77,7 +64,7 @@ export function ErrorState({
   onRetry?: () => void;
 }) {
   return (
-    <SurfaceCard tone="panel" padding="sm">
+    <OpenSection divider="top">
       <Alert
         severity="error"
         variant="outlined"
@@ -93,7 +80,7 @@ export function ErrorState({
         <AlertTitle>{title}</AlertTitle>
         {description}
       </Alert>
-    </SurfaceCard>
+    </OpenSection>
   );
 }
 

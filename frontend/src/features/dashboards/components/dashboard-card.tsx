@@ -3,30 +3,29 @@ import { Button, Stack, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 
 import { StatusBadge } from "@next/components/ui/status-badge";
-import { SurfaceCard } from "@next/components/ui/surface-card";
+import { OpenSection } from "@next/components/ui/surface-card";
 import { tokens } from "@next/theme/tokens";
 
 import { dashboardFreshnessTone, formatDashboardDateTime, formatFreshnessLabel, type DashboardSummary } from "../types";
 
 export function DashboardCard({ dashboard }: { dashboard: DashboardSummary }) {
   return (
-    <SurfaceCard tone="quiet" padding="sm">
+    <OpenSection divider="top" spacing={1}>
       <Stack
         direction={{ xs: "column", md: "row" }}
         spacing={1.5}
         justifyContent="space-between"
         alignItems={{ xs: "flex-start", md: "center" }}
         sx={{
-          py: 1.5,
-          borderTop: `1px solid ${alpha(tokens.color.border.strong, 0.46)}`,
+          py: 0.75,
           position: "relative",
           "&::before": {
             content: '""',
             position: "absolute",
             left: 0,
-            top: -1,
-            width: 40,
-            height: 2,
+            top: 0,
+            width: 28,
+            height: 1,
             bgcolor: tokens.color.accent.blue,
             opacity: 0.7,
           },
@@ -48,6 +47,6 @@ export function DashboardCard({ dashboard }: { dashboard: DashboardSummary }) {
           Open dashboard
         </Button>
       </Stack>
-    </SurfaceCard>
+    </OpenSection>
   );
 }

@@ -5,7 +5,7 @@ import { Link as RouterLink, useParams } from "react-router-dom";
 import { DataTableFrame } from "@next/components/ui/data-table";
 import { PageHeader } from "@next/components/ui/page-header";
 import { PageSurface } from "@next/components/ui/page-surface";
-import { MetricStrip, MetricStripItem, SectionBand, SurfaceCard } from "@next/components/ui/surface-card";
+import { InlineStatItem, InlineStatRow, MetricStrip, MetricStripItem, OpenSection, SectionBand, SectionBlock } from "@next/components/ui/surface-card";
 import { EmptyState, ErrorState, LoadingState } from "@next/components/ui/states";
 import { AskAIComposer } from "@next/features/ai/components/ask-ai-composer";
 import { useDatasetDetail } from "@next/features/datasets/hooks";
@@ -24,25 +24,25 @@ function formatBytes(bytes: number) {
 
 function WorkflowRail() {
   return (
-    <SurfaceCard tone="panel" padding="md">
-      <Stack spacing={2.2}>
-        <Stack component="ol" spacing={1.1} sx={{ m: 0, pl: 2.25 }}>
-          <Typography component="li" variant="body2" color="text.secondary">
-            Review inferred columns and sample values
-          </Typography>
-          <Typography component="li" variant="body2" color="text.secondary">
-            Ask a focused question and inspect SQL + results
-          </Typography>
-          <Typography component="li" variant="body2" color="text.secondary">
-            Generate insights and save high-signal widgets
-          </Typography>
-        </Stack>
+    <SectionBlock divider="top">
+      <Stack component="ol" spacing={1.1} sx={{ m: 0, pl: 2.25 }}>
+        <Typography component="li" variant="body2" color="text.secondary">
+          Review inferred columns and sample values
+        </Typography>
+        <Typography component="li" variant="body2" color="text.secondary">
+          Ask a focused question and inspect SQL + results
+        </Typography>
+        <Typography component="li" variant="body2" color="text.secondary">
+          Generate insights and save high-signal widgets
+        </Typography>
+      </Stack>
 
+      <Box sx={{ borderTop: `1px solid ${alpha(tokens.color.border.strong, 0.22)}`, pt: 1.15 }}>
         <Button component={RouterLink} to="/dashboards" variant="outlined" fullWidth>
           Open dashboards
         </Button>
-      </Stack>
-    </SurfaceCard>
+      </Box>
+    </SectionBlock>
   );
 }
 
@@ -110,38 +110,27 @@ export function NextDatasetDetailPage() {
         />
 
         <Stack spacing={2}>
-          <Box
-            sx={{
-              borderRadius: tokens.radius.md,
-              border: `1px solid ${alpha(tokens.color.border.strong, 0.5)}`,
-              borderLeft: `3px solid ${tokens.color.accent.blue}`,
-              backgroundColor: tokens.color.bg.surface,
-              overflow: "hidden",
-            }}
-          >
-            <Stack spacing={0}>
-              <Stack direction={{ xs: "column", xl: "row" }} spacing={1.5} justifyContent="space-between" alignItems={{ xs: "flex-start", xl: "center" }} sx={{ p: { xs: 1.55, md: 1.8 } }}>
-                <Stack spacing={0.6} sx={{ maxWidth: 880 }}>
-                  <Typography variant="overline" sx={{ color: tokens.color.accent.blue, letterSpacing: "0.12em" }}>
-                    Active dataset
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Source file: {dataset.original_filename}
-                  </Typography>
-                </Stack>
+          <OpenSection divider="both" spacing={1.5}>
+            <Stack direction={{ xs: "column", xl: "row" }} spacing={1.25} justifyContent="space-between" alignItems={{ xs: "flex-start", xl: "flex-end" }}>
+              <Stack spacing={0.55} sx={{ maxWidth: 880 }}>
+                <Typography variant="overline" sx={{ color: tokens.color.accent.blue, letterSpacing: "0.12em" }}>
+                  Active dataset
+                </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Imported {new Date(dataset.created_at).toLocaleString()}
+                  Source file: {dataset.original_filename}
                 </Typography>
               </Stack>
-              <Box sx={{ px: { xs: 1.2, md: 1.45 }, borderTop: `1px solid ${alpha(tokens.color.border.strong, 0.26)}` }}>
-                <MetricStrip accent>
-                  <MetricStripItem label="Rows" value={dataset.row_count.toLocaleString()} detail="Ready to query" />
-                  <MetricStripItem label="Columns" value={dataset.column_count.toLocaleString()} detail="Schema fields detected" />
-                  <MetricStripItem label="File size" value={formatBytes(dataset.file_size_bytes)} detail="CSV source volume" />
-                </MetricStrip>
-              </Box>
+              <Typography variant="body2" color="text.secondary">
+                Imported {new Date(dataset.created_at).toLocaleString()}
+              </Typography>
             </Stack>
-          </Box>
+
+            <InlineStatRow columns={3}>
+              <InlineStatItem label="Rows" value={dataset.row_count.toLocaleString()} detail="Ready to query" />
+              <InlineStatItem label="Columns" value={dataset.column_count.toLocaleString()} detail="Schema fields detected" />
+              <InlineStatItem label="File size" value={formatBytes(dataset.file_size_bytes)} detail="CSV source volume" />
+            </InlineStatRow>
+          </OpenSection>
 
           <Box
             sx={{

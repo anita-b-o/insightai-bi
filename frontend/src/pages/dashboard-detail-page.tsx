@@ -9,7 +9,7 @@ import { PageHeader } from "@next/components/ui/page-header";
 import { PageSurface } from "@next/components/ui/page-surface";
 import { StatusBadge } from "@next/components/ui/status-badge";
 import { EmptyState, ErrorState, LoadingState } from "@next/components/ui/states";
-import { MetricStrip, MetricStripItem, SectionBand, SurfaceCard } from "@next/components/ui/surface-card";
+import { InlineStatItem, InlineStatRow, OpenSection, SectionBand } from "@next/components/ui/surface-card";
 import { DashboardGrid } from "@next/features/dashboards/components/dashboard-grid";
 import { ExportDashboardButton } from "@next/features/dashboards/components/export-dashboard-button";
 import { ShareDialog } from "@next/features/dashboards/components/share-dialog";
@@ -38,8 +38,8 @@ function NarrativeStrip({
   }
 
   return (
-    <SurfaceCard tone="quiet" padding="sm">
-      <Stack spacing={1.6} sx={{ py: 1.15, borderTop: `1px solid ${alpha(tokens.color.border.strong, 0.45)}` }}>
+    <OpenSection divider="top" spacing={1.2}>
+      <Stack spacing={1.2}>
         {summary ? (
           <Typography variant="body1" sx={{ maxWidth: 980 }}>
             {summary}
@@ -63,7 +63,7 @@ function NarrativeStrip({
           </Typography>
         ) : null}
       </Stack>
-    </SurfaceCard>
+    </OpenSection>
   );
 }
 
@@ -159,16 +159,8 @@ export function NextDashboardDetailPage() {
           }
         />
 
-        <Box
-          sx={{
-            borderRadius: tokens.radius.md,
-            border: `1px solid ${alpha(tokens.color.border.strong, 0.5)}`,
-            borderLeft: `3px solid ${tokens.color.accent.blue}`,
-            backgroundColor: tokens.color.bg.surface,
-            overflow: "hidden",
-          }}
-        >
-          <Stack spacing={2.15} sx={{ p: { xs: 1.55, md: 1.8 } }}>
+        <OpenSection divider="both" spacing={1.55}>
+          <Stack spacing={1.55}>
             <Stack direction={{ xs: "column", lg: "row" }} spacing={1.5} justifyContent="space-between" alignItems={{ xs: "flex-start", lg: "center" }}>
               <Stack spacing={0.85}>
                 <Stack direction="row" spacing={1} alignItems="center" useFlexGap flexWrap="wrap">
@@ -198,14 +190,14 @@ export function NextDashboardDetailPage() {
               />
             </Stack>
 
-            <MetricStrip desktopColumns={4} accent>
-              <MetricStripItem label="Widgets" value={dashboard.widgets.length.toLocaleString()} detail="Saved on canvas" />
-              <MetricStripItem label="Auto refresh" value={dashboard.auto_refresh_enabled ? "Enabled" : "Disabled"} detail={formatDashboardInterval(dashboard.refresh_interval_minutes)} />
-              <MetricStripItem label="Last success" value={formatDashboardDateTime(dashboard.last_successful_refresh_at)} detail="Latest successful run" />
-              <MetricStripItem label="Next refresh" value={formatDashboardDateTime(dashboard.next_refresh_at)} detail="Backend schedule" />
-            </MetricStrip>
+            <InlineStatRow columns={4}>
+              <InlineStatItem label="Widgets" value={dashboard.widgets.length.toLocaleString()} detail="Saved on canvas" />
+              <InlineStatItem label="Auto refresh" value={dashboard.auto_refresh_enabled ? "Enabled" : "Disabled"} detail={formatDashboardInterval(dashboard.refresh_interval_minutes)} />
+              <InlineStatItem label="Last success" value={formatDashboardDateTime(dashboard.last_successful_refresh_at)} detail="Latest successful run" />
+              <InlineStatItem label="Next refresh" value={formatDashboardDateTime(dashboard.next_refresh_at)} detail="Backend schedule" />
+            </InlineStatRow>
           </Stack>
-        </Box>
+        </OpenSection>
 
         {refreshDashboardMutation.isError ? <Alert severity="error">{getApiErrorMessage(refreshDashboardMutation.error, "Could not refresh dashboard")}</Alert> : null}
 

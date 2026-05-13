@@ -28,6 +28,7 @@ export function NextRegisterPage() {
         title="Create account"
         subtitle="Register a workspace user to start profiling datasets, asking questions, and building shareable dashboards."
         padding="md"
+        tone="panel"
       >
         <NextAuthForm
           mode="register"

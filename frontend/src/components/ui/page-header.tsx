@@ -22,17 +22,17 @@ export function PageHeader({
       justifyContent="space-between"
       alignItems={{ xs: "flex-start", lg: "flex-end" }}
       sx={{
-        pb: 2,
-        borderBottom: `1px solid ${alpha(tokens.color.border.strong, 0.46)}`,
+        pb: 1.75,
+        borderBottom: `1px solid ${alpha(tokens.color.border.strong, 0.28)}`,
         position: "relative",
         "&::before": {
           content: '""',
           position: "absolute",
           left: 0,
           bottom: -1,
-          width: { xs: 52, md: 84 },
-          height: 2,
-          background: `linear-gradient(90deg, ${tokens.color.accent.blue} 0%, ${tokens.color.accent.cyan} 100%)`,
+          width: { xs: 36, md: 56 },
+          height: 1,
+          background: alpha(tokens.color.accent.blue, 0.76),
         },
       }}
     >

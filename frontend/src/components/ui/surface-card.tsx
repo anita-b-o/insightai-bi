@@ -1,6 +1,7 @@
 import type { PropsWithChildren, ReactNode } from "react";
+import type { SxProps, Theme } from "@mui/material";
 import { alpha } from "@mui/material/styles";
-import { Box, Card, CardContent, Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 
 import { tokens } from "@next/theme/tokens";
 
@@ -22,93 +23,150 @@ export function SurfaceCard({
   padding?: SurfacePadding;
 }>) {
   const paddingMap = {
-    sm: { xs: 1.35, md: 1.65 },
-    md: { xs: 1.7, md: 2 },
-    lg: { xs: 2.05, md: 2.35 },
+    sm: { xs: 1.15, md: 1.35 },
+    md: { xs: 1.45, md: 1.75 },
+    lg: { xs: 1.8, md: 2.05 },
   } as const;
 
   const toneStyles = {
     panel: {
       backgroundColor: tokens.color.bg.surface,
-      border: `1px solid ${alpha(tokens.color.border.subtle, 0.74)}`,
-      boxShadow: "none",
+      border: `1px solid ${alpha(tokens.color.border.strong, 0.26)}`,
+      borderTop: `1px solid ${alpha(tokens.color.border.strong, 0.42)}`,
+      borderRadius: tokens.radius.md,
     },
     well: {
-      backgroundColor: alpha(tokens.color.bg.surface, 0.98),
-      border: `1px solid ${alpha(tokens.color.border.strong, 0.42)}`,
-      boxShadow: "none",
+      backgroundColor: alpha(tokens.color.bg.surfaceMuted, 0.7),
+      border: `1px solid ${alpha(tokens.color.border.subtle, 0.92)}`,
+      borderRadius: tokens.radius.sm,
     },
     quiet: {
       backgroundColor: "transparent",
       border: "none",
-      boxShadow: "none",
+      borderRadius: 0,
     },
     hero: {
       backgroundColor: tokens.color.bg.surface,
-      border: `1px solid ${alpha(tokens.color.border.strong, 0.56)}`,
-      boxShadow: "none",
+      borderTop: `2px solid ${alpha(tokens.color.accent.blue, 0.82)}`,
+      borderBottom: `1px solid ${alpha(tokens.color.border.strong, 0.34)}`,
+      borderLeft: "none",
+      borderRight: "none",
+      borderRadius: 0,
     },
   } as const;
 
   return (
-    <Card
-      sx={{
-        ...toneStyles[tone],
-        borderRadius: tone === "hero" ? tokens.radius.lg : tone === "well" ? tokens.radius.sm : tokens.radius.md,
-      }}
-    >
-      <CardContent sx={{ p: paddingMap[padding] }}>
-        <Stack spacing={tokens.spacing.blockGap / 8}>
-          {title || subtitle || action ? (
-            <Stack
-              direction={{ xs: "column", md: "row" }}
-              spacing={1.5}
-              justifyContent="space-between"
-              alignItems={{ xs: "flex-start", md: "center" }}
-            >
-              <Stack spacing={0.95}>
-                {typeof title === "string" ? <Typography variant="h5">{title}</Typography> : title}
-                {typeof subtitle === "string" ? (
-                  <Typography variant="body2" color="text.secondary">
-                    {subtitle}
-                  </Typography>
-                ) : (
-                  subtitle
-                )}
-              </Stack>
-              {action}
+    <Box sx={{ ...toneStyles[tone] }}>
+      <Stack spacing={tokens.spacing.blockGap / 8} sx={{ p: paddingMap[padding] }}>
+        {title || subtitle || action ? (
+          <Stack
+            direction={{ xs: "column", md: "row" }}
+            spacing={1.15}
+            justifyContent="space-between"
+            alignItems={{ xs: "flex-start", md: "flex-end" }}
+          >
+            <Stack spacing={0.65}>
+              {typeof title === "string" ? <Typography variant="h5">{title}</Typography> : title}
+              {typeof subtitle === "string" ? (
+                <Typography variant="body2" color="text.secondary">
+                  {subtitle}
+                </Typography>
+              ) : (
+                subtitle
+              )}
             </Stack>
-          ) : null}
-          <Stack spacing={tokens.spacing.elementGap / 8}>{children}</Stack>
-        </Stack>
-      </CardContent>
-    </Card>
+            {action}
+          </Stack>
+        ) : null}
+        <Stack spacing={tokens.spacing.elementGap / 8}>{children}</Stack>
+      </Stack>
+    </Box>
   );
 }
 
 export function InverseHeroCard({ children }: PropsWithChildren) {
   return (
-    <Card
+    <Box
       sx={{
-        background: tokens.color.bg.surface,
-        color: tokens.color.fg.primary,
-        border: `1px solid ${alpha(tokens.color.border.strong, 0.56)}`,
-        boxShadow: "none",
-        position: "relative",
-        overflow: "hidden",
-        borderRadius: tokens.radius.md,
+        borderTop: `2px solid ${alpha(tokens.color.accent.blue, 0.86)}`,
+        borderBottom: `1px solid ${alpha(tokens.color.border.strong, 0.32)}`,
+        backgroundColor: alpha(tokens.color.bg.inverse, 0.02),
       }}
     >
-      <Box
-        sx={{
-          position: "absolute",
-          inset: 0,
-          background: "none",
-          pointerEvents: "none",
-        }}
-      />
-      <CardContent sx={{ p: { xs: 1.8, md: 2.1 }, position: "relative" }}>{children}</CardContent>
-    </Card>
+      <Box sx={{ py: { xs: 2.05, md: 2.35 } }}>{children}</Box>
+    </Box>
+  );
+}
+
+export function OpenSection({
+  children,
+  divider = "top",
+  spacing = 2,
+  sx,
+}: PropsWithChildren<{ divider?: "none" | "top" | "bottom" | "both"; spacing?: number; sx?: SxProps<Theme> }>) {
+  const topBorder = divider === "top" || divider === "both";
+  const bottomBorder = divider === "bottom" || divider === "both";
+
+  return (
+    <Stack
+      spacing={spacing}
+      sx={{
+        py: 1.5,
+        borderTop: topBorder ? `1px solid ${alpha(tokens.color.border.strong, 0.26)}` : "none",
+        borderBottom: bottomBorder ? `1px solid ${alpha(tokens.color.border.strong, 0.26)}` : "none",
+        ...sx,
+      }}
+    >
+      {children}
+    </Stack>
+  );
+}
+
+export function SectionBlock({
+  title,
+  eyebrow,
+  description,
+  action,
+  children,
+  divider = "top",
+}: PropsWithChildren<{
+  title?: ReactNode;
+  eyebrow?: ReactNode;
+  description?: ReactNode;
+  action?: ReactNode;
+  divider?: "none" | "top" | "bottom" | "both";
+}>) {
+  return (
+    <OpenSection divider={divider} spacing={1.5}>
+      {eyebrow || title || description || action ? (
+        <Stack
+          direction={{ xs: "column", lg: "row" }}
+          spacing={1.25}
+          justifyContent="space-between"
+          alignItems={{ xs: "flex-start", lg: "flex-start" }}
+        >
+          <Stack spacing={0.6} sx={{ maxWidth: 920 }}>
+            {typeof eyebrow === "string" ? (
+              <Typography variant="overline" color="text.secondary">
+                {eyebrow}
+              </Typography>
+            ) : (
+              eyebrow
+            )}
+            {typeof title === "string" ? <Typography variant="h6">{title}</Typography> : title}
+            {typeof description === "string" ? (
+              <Typography variant="body2" color="text.secondary">
+                {description}
+              </Typography>
+            ) : (
+              description
+            )}
+          </Stack>
+          {action}
+        </Stack>
+      ) : null}
+      {children}
+    </OpenSection>
   );
 }
 
@@ -129,17 +187,17 @@ export function SectionBand({
   divider?: "none" | "subtle" | "strong";
 }>) {
   const densityMap = {
-    compact: { xs: 2, md: 2.3, content: 2.05 },
-    comfortable: { xs: 2.5, md: 3, content: tokens.spacing.blockGap / 8 },
-    roomy: { xs: 3, md: 3.5, content: 3 },
+    compact: { xs: 1.85, md: 2.15, content: 1.75 },
+    comfortable: { xs: 2.35, md: 2.75, content: 2.15 },
+    roomy: { xs: 2.85, md: 3.2, content: 2.65 },
   } as const;
 
   const borderColor =
     divider === "none"
       ? "transparent"
       : divider === "strong"
-        ? alpha(tokens.color.border.strong, 0.52)
-        : alpha(tokens.color.border.strong, 0.32);
+        ? alpha(tokens.color.border.strong, 0.42)
+        : alpha(tokens.color.border.strong, 0.24);
 
   return (
     <Stack
@@ -152,11 +210,11 @@ export function SectionBand({
       {eyebrow || title || description || action ? (
         <Stack
           direction={{ xs: "column", lg: "row" }}
-          spacing={2}
+          spacing={1.85}
           justifyContent="space-between"
           alignItems={{ xs: "flex-start", lg: "flex-end" }}
         >
-          <Stack spacing={1} sx={{ maxWidth: 960 }}>
+          <Stack spacing={0.75} sx={{ maxWidth: 960 }}>
             {typeof eyebrow === "string" ? (
               <Typography variant="overline" color="text.secondary">
                 {eyebrow}
@@ -181,6 +239,62 @@ export function SectionBand({
   );
 }
 
+export function InlineStatRow({
+  children,
+  columns = 3,
+  divider = "both",
+}: PropsWithChildren<{ columns?: 2 | 3 | 4; divider?: "none" | "top" | "bottom" | "both" }>) {
+  const topBorder = divider === "top" || divider === "both";
+  const bottomBorder = divider === "bottom" || divider === "both";
+
+  return (
+    <Box
+      sx={{
+        display: "grid",
+        gridTemplateColumns: {
+          xs: "1fr",
+          sm: columns === 2 ? "repeat(2, minmax(0, 1fr))" : "repeat(2, minmax(0, 1fr))",
+          lg: `repeat(${columns}, minmax(0, 1fr))`,
+        },
+        gap: "1px",
+        borderTop: topBorder ? `1px solid ${alpha(tokens.color.border.strong, 0.22)}` : "none",
+        borderBottom: bottomBorder ? `1px solid ${alpha(tokens.color.border.strong, 0.22)}` : "none",
+        backgroundColor: alpha(tokens.color.border.strong, 0.16),
+      }}
+    >
+      {children}
+    </Box>
+  );
+}
+
+export function InlineStatItem({ label, value, detail }: { label: string; value: ReactNode; detail?: ReactNode }) {
+  return (
+    <Stack
+      spacing={0.45}
+      sx={{
+        py: { xs: 1.15, md: 1.35 },
+        px: { xs: 0.15, sm: 1.2, lg: 1.45 },
+        minWidth: 0,
+        backgroundColor: tokens.color.bg.canvas,
+      }}
+    >
+      <Typography variant="caption" color="text.secondary" sx={{ letterSpacing: "0.06em", textTransform: "uppercase" }}>
+        {label}
+      </Typography>
+      <Typography variant="subtitle1" sx={{ lineHeight: 1.3 }}>
+        {value}
+      </Typography>
+      {typeof detail === "string" ? (
+        <Typography variant="body2" color="text.secondary">
+          {detail}
+        </Typography>
+      ) : (
+        detail
+      )}
+    </Stack>
+  );
+}
+
 export function MetricStrip({
   children,
   desktopColumns = 3,
@@ -198,18 +312,17 @@ export function MetricStrip({
         },
         alignItems: "stretch",
         gap: "1px",
-        backgroundColor: alpha(tokens.color.border.strong, 0.2),
+        backgroundColor: alpha(tokens.color.border.strong, 0.14),
         borderTop: `1px solid ${alpha(tokens.color.border.strong, 0.2)}`,
         borderBottom: `1px solid ${alpha(tokens.color.border.strong, 0.2)}`,
-        overflow: "hidden",
         "&::before": accent
           ? {
               content: '""',
               position: "absolute",
               insetInline: 0,
               top: 0,
-              height: 2,
-              backgroundColor: alpha(tokens.color.accent.blue, 0.85),
+              height: 1,
+              backgroundColor: alpha(tokens.color.accent.blue, 0.7),
             }
           : undefined,
       }}
@@ -222,12 +335,12 @@ export function MetricStrip({
 export function MetricStripItem({ label, value, detail }: { label: string; value: ReactNode; detail?: ReactNode }) {
   return (
     <Stack
-      spacing={0.75}
+      spacing={0.55}
       sx={{
-        py: { xs: 1.6, md: 1.8 },
-        px: { xs: 0.35, sm: 1.35, lg: 1.7 },
+        py: { xs: 1.25, md: 1.45 },
+        px: { xs: 0.2, sm: 1.15, lg: 1.45 },
         minWidth: 0,
-        backgroundColor: tokens.color.bg.surface,
+        backgroundColor: tokens.color.bg.canvas,
         justifyContent: "center",
       }}
     >
@@ -238,17 +351,7 @@ export function MetricStripItem({ label, value, detail }: { label: string; value
         {value}
       </Typography>
       {typeof detail === "string" ? (
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          sx={{
-            lineHeight: 1.5,
-            whiteSpace: { xs: "normal", lg: "nowrap" },
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }}
-          title={detail}
-        >
+        <Typography variant="body2" color="text.secondary" title={detail}>
           {detail}
         </Typography>
       ) : (

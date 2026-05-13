@@ -6,7 +6,7 @@ import { PageHeader } from "@next/components/ui/page-header";
 import { PageSurface } from "@next/components/ui/page-surface";
 import { StatusBadge } from "@next/components/ui/status-badge";
 import { EmptyState, ErrorState, LoadingState } from "@next/components/ui/states";
-import { MetricStrip, MetricStripItem, SectionBand, SurfaceCard } from "@next/components/ui/surface-card";
+import { InlineStatItem, InlineStatRow, OpenSection, SectionBand } from "@next/components/ui/surface-card";
 import { DashboardGrid } from "@next/features/dashboards/components/dashboard-grid";
 import { DashboardWidget } from "@next/features/dashboards/components/dashboard-widget";
 import { dashboardFreshnessTone, formatDashboardDateTime, formatFreshnessLabel } from "@next/features/dashboards/types";
@@ -23,8 +23,8 @@ function PublicNarrative({
   caveats: string[];
 }) {
   return (
-    <SurfaceCard tone="quiet" padding="sm">
-      <Stack spacing={1.6} sx={{ py: 1.15, borderTop: `1px solid ${alpha(tokens.color.border.strong, 0.45)}` }}>
+    <OpenSection divider="top" spacing={1.2}>
+      <Stack spacing={1.2}>
         <Typography variant="body1" sx={{ maxWidth: 980 }}>
           {summary || "No narrative summary available for this shared dashboard."}
         </Typography>
@@ -42,7 +42,7 @@ function PublicNarrative({
         ) : null}
         {caveats.length > 0 ? <Alert severity="warning">{caveats[0]}</Alert> : null}
       </Stack>
-    </SurfaceCard>
+    </OpenSection>
   );
 }
 
@@ -77,27 +77,23 @@ export function NextSharedDashboardPage() {
           action={<StatusBadge label={formatFreshnessLabel(dashboard.freshness_status)} tone={dashboardFreshnessTone(dashboard.freshness_status)} />}
         />
 
-        <SurfaceCard tone="hero" padding="md">
-          <Stack spacing={2.15}>
-            <Stack spacing={0.75}>
-              <Typography variant="overline" sx={{ color: tokens.color.accent.blue }}>
-                Read-only view
-              </Typography>
-              <Typography variant="h5">
-                Shared dashboard
-              </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 780 }}>
-                This public surface renders the persisted dashboard state returned by the backend token endpoint, without any authenticated controls.
-              </Typography>
-            </Stack>
-
-            <MetricStrip accent>
-              <MetricStripItem label="Widgets" value={dashboard.widgets.length.toLocaleString()} detail="Visible to viewers" />
-              <MetricStripItem label="Last success" value={formatDashboardDateTime(dashboard.last_successful_refresh_at)} detail="Latest successful refresh" />
-              <MetricStripItem label="Next refresh" value={formatDashboardDateTime(dashboard.next_refresh_at)} detail="Backend schedule" />
-            </MetricStrip>
+        <OpenSection divider="both" spacing={1.5}>
+          <Stack spacing={0.75}>
+            <Typography variant="overline" sx={{ color: tokens.color.accent.blue }}>
+              Read-only view
+            </Typography>
+            <Typography variant="h5">Shared dashboard</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 780 }}>
+              This public surface renders the persisted dashboard state returned by the backend token endpoint, without any authenticated controls.
+            </Typography>
           </Stack>
-        </SurfaceCard>
+
+          <InlineStatRow columns={3}>
+            <InlineStatItem label="Widgets" value={dashboard.widgets.length.toLocaleString()} detail="Visible to viewers" />
+            <InlineStatItem label="Last success" value={formatDashboardDateTime(dashboard.last_successful_refresh_at)} detail="Latest successful refresh" />
+            <InlineStatItem label="Next refresh" value={formatDashboardDateTime(dashboard.next_refresh_at)} detail="Backend schedule" />
+          </InlineStatRow>
+        </OpenSection>
 
         <SectionBand
           eyebrow="Narrative"

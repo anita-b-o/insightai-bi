@@ -29,14 +29,14 @@ export function NextDashboardsPage() {
 
   return (
     <PageSurface variant="workspace">
-      <Stack spacing={4}>
+      <Stack spacing={3.5}>
         <PageHeader
           eyebrow="Reusable analysis"
           title="Dashboards"
           description="Keep high-signal AI answers and insight outputs in a persistent BI workspace."
         />
 
-        <Stack spacing={1.5} sx={{ pb: 2, borderBottom: (theme) => `1px solid ${theme.palette.divider}` }}>
+        <Stack spacing={1.15} sx={{ pb: 1.5, borderBottom: (theme) => `1px solid ${theme.palette.divider}` }}>
           <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 820 }}>
             Create a dashboard, then keep refreshing widgets from the same backend-powered Ask AI and insight flows already in the product.
           </Typography>

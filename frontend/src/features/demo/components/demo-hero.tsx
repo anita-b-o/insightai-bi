@@ -3,7 +3,7 @@ import { Box, Button, Chip, Stack, Typography } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import { Link as RouterLink } from "react-router-dom";
 
-import { InverseHeroCard } from "@next/components/ui/surface-card";
+import { InlineStatItem, InlineStatRow, InverseHeroCard } from "@next/components/ui/surface-card";
 import { tokens } from "@next/theme/tokens";
 
 import type { DemoExperience } from "../types";
@@ -34,16 +34,10 @@ export function DemoHero({ demo }: { demo: DemoExperience }) {
           </Stack>
         </Stack>
 
-        <Box
-          sx={{
-            display: "grid",
-            gridTemplateColumns: { xs: "1fr", md: "repeat(3, minmax(0, 1fr))" },
-            gap: 1.05,
-          }}
-        >
-          <MiniStat label="Dataset" value={demo.dataset.name} detail="Analysis sample" />
-          <MiniStat label="Coverage" value={`${demo.dataset.rowCount} rows · ${demo.dataset.columnCount} columns`} detail="Compact BI walkthrough" />
-          <MiniStat
+        <InlineStatRow columns={3}>
+          <InlineStatItem label="Dataset" value={demo.dataset.name} detail="Analysis sample" />
+          <InlineStatItem label="Coverage" value={`${demo.dataset.rowCount} rows · ${demo.dataset.columnCount} columns`} detail="Compact BI walkthrough" />
+          <InlineStatItem
             label="Flow"
             value={
               <Stack direction="row" spacing={0.8} flexWrap="wrap" useFlexGap>
@@ -54,47 +48,8 @@ export function DemoHero({ demo }: { demo: DemoExperience }) {
             }
             detail="Same product flow"
           />
-        </Box>
+        </InlineStatRow>
       </Stack>
     </InverseHeroCard>
-  );
-}
-
-function MiniStat({
-  label,
-  value,
-  detail,
-}: {
-  label: string;
-  value: ReactNode;
-  detail: string;
-}) {
-  return (
-    <Stack
-      spacing={0.75}
-      sx={{
-        p: { xs: 1.35, md: 1.45 },
-        borderRadius: tokens.radius.xs,
-        border: `1px solid ${alpha(tokens.color.border.subtle, 0.8)}`,
-        backgroundColor: tokens.color.bg.surface,
-        minWidth: 0,
-        minHeight: 116,
-        justifyContent: "space-between",
-      }}
-    >
-      <Typography variant="caption" color="text.secondary" sx={{ textTransform: "uppercase", letterSpacing: "0.06em" }}>
-        {label}
-      </Typography>
-      {typeof value === "string" ? (
-        <Typography variant="subtitle1" sx={{ lineHeight: 1.28 }}>
-          {value}
-        </Typography>
-      ) : (
-        value
-      )}
-      <Typography variant="body2" color="text.secondary" sx={{ whiteSpace: "normal" }}>
-        {detail}
-      </Typography>
-    </Stack>
   );
 }

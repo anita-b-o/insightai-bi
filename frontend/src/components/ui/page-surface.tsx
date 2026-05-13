@@ -14,8 +14,8 @@ export function PageSurface({
         width: "100%",
         maxWidth: tokens.layout.appMaxWidth,
         mx: "auto",
-        px: variant === "workspace" ? { xs: 2, md: 3.25, xl: 4 } : { xs: 2, md: 3, xl: 3.5 },
-        py: variant === "workspace" ? { xs: 3, md: 4.5 } : { xs: 3, md: 4.5 },
+        px: variant === "workspace" ? { xs: 2, md: 3, xl: 3.5 } : { xs: 2, md: 2.75, xl: 3.25 },
+        py: variant === "workspace" ? { xs: 2.75, md: 4 } : { xs: 2.75, md: 4 },
         backgroundColor: tone === "muted" ? alpha(tokens.color.bg.surface, 0.92) : "transparent",
       }}
     >

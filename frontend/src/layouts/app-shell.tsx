@@ -63,10 +63,10 @@ function AppNavigation({ onNavigate }: { onNavigate?: () => void }) {
               selected={selected}
               onClick={onNavigate}
               sx={{
-                borderRadius: tokens.radius.sm,
+                borderRadius: tokens.radius.xs,
                 alignItems: "center",
                 color: alpha(tokens.color.fg.inverse, selected ? 1 : 0.78),
-                backgroundColor: selected ? alpha(tokens.color.bg.surface, 0.1) : "transparent",
+                backgroundColor: selected ? alpha(tokens.color.bg.surface, 0.06) : "transparent",
                 borderLeft: selected ? `2px solid ${tokens.color.accent.cyan}` : "2px solid transparent",
                 "& .MuiListItemIcon-root": {
                   color: alpha(tokens.color.fg.inverse, selected ? 1 : 0.72),
@@ -143,7 +143,7 @@ export function NextAppShell() {
           sx={{
             color: tokens.color.fg.inverse,
             borderColor: alpha(tokens.color.bg.surface, 0.18),
-            backgroundColor: alpha(tokens.color.bg.surface, 0.04),
+            backgroundColor: "transparent",
           }}
         >
           Logout
@@ -209,12 +209,12 @@ export function NextAppShell() {
                 sx={{
                   display: { xs: "none", md: "flex" },
                   alignItems: "center",
-                  gap: 1.25,
-                  px: 1.25,
-                  py: 0.75,
-                  borderRadius: tokens.radius.sm,
-                  backgroundColor: alpha(tokens.color.bg.surface, 0.08),
-                  border: `1px solid ${alpha(tokens.color.bg.surface, 0.08)}`,
+                gap: 1.25,
+                px: 1.25,
+                py: 0.75,
+                  borderRadius: tokens.radius.xs,
+                  backgroundColor: alpha(tokens.color.bg.surface, 0.05),
+                  border: `1px solid ${alpha(tokens.color.bg.surface, 0.06)}`,
                 }}
               >
                 <Avatar sx={{ width: 30, height: 30, bgcolor: alpha(tokens.color.bg.surface, 0.14), color: tokens.color.fg.inverse }}>

@@ -4,7 +4,7 @@ import { alpha } from "@mui/material/styles";
 import { Accordion, AccordionDetails, AccordionSummary, Alert, Box, Button, Chip, Stack, Typography } from "@mui/material";
 
 import { StatusBadge } from "@next/components/ui/status-badge";
-import { SurfaceCard } from "@next/components/ui/surface-card";
+import { OpenSection } from "@next/components/ui/surface-card";
 import { AIResultChart, EmptyChartState, getChartRenderState } from "@next/features/ai/components/ai-result-chart";
 import { AIResultTable } from "@next/features/ai/components/ai-result-table";
 import type { AIQueryResponse, VisualizationSuggestion } from "@next/features/ai/types";
@@ -104,8 +104,8 @@ export function DashboardWidget({
   const widgetAlertSeverity = error ? "error" : "warning";
 
   return (
-    <SurfaceCard tone="panel" padding="sm">
-      <Stack spacing={1.25} sx={{ height: "100%", minHeight: 0 }}>
+    <OpenSection divider="both" spacing={1.25}>
+      <Stack spacing={1.2} sx={{ height: "100%", minHeight: 0 }}>
         <Stack direction={{ xs: "column", sm: "row" }} spacing={1.2} justifyContent="space-between" alignItems={{ xs: "flex-start", sm: "flex-start" }}>
           <Stack spacing={0.85} sx={{ minWidth: 0 }}>
             <Stack direction="row" spacing={0.9} useFlexGap flexWrap="wrap" alignItems="center">
@@ -114,7 +114,7 @@ export function DashboardWidget({
                 label={widget.widget_type}
                 sx={{
                   borderRadius: tokens.radius.xs,
-                  backgroundColor: tokens.color.bg.surface,
+                  backgroundColor: tokens.color.bg.canvas,
                 }}
               />
               <StatusBadge label={widgetExecutionLabel(widget.execution_status)} tone={widgetExecutionTone(widget.execution_status)} />
@@ -155,7 +155,7 @@ export function DashboardWidget({
         {!result ? (
           <Box
             sx={{
-              py: 2.6,
+              py: 1.8,
               borderTop: `1px solid ${alpha(tokens.color.border.strong, 0.42)}`,
             }}
           >
@@ -169,7 +169,7 @@ export function DashboardWidget({
               <Box
                 sx={{
                   px: 0,
-                  py: 0.72,
+                  py: 0.58,
                   borderRadius: 0,
                   backgroundColor: "transparent",
                   borderBottom: `1px solid ${alpha(tokens.color.border.strong, 0.26)}`,
@@ -206,16 +206,17 @@ export function DashboardWidget({
                 disableGutters
                 elevation={0}
                 sx={{
-                  border: `1px solid ${alpha(tokens.color.border.strong, 0.34)}`,
-                  borderRadius: `${tokens.radius.xs}px !important`,
-                  backgroundColor: tokens.color.bg.surface,
+                  borderTop: `1px solid ${alpha(tokens.color.border.strong, 0.28)}`,
+                  borderBottom: `1px solid ${alpha(tokens.color.border.strong, 0.28)}`,
+                  borderRadius: 0,
+                  backgroundColor: "transparent",
                   "&::before": { display: "none" },
                 }}
               >
-                <AccordionSummary expandIcon={<ExpandMoreRoundedIcon />} sx={{ minHeight: 0, px: 1.25, py: 0.1 }} aria-label="View generated SQL">
+                <AccordionSummary expandIcon={<ExpandMoreRoundedIcon />} sx={{ minHeight: 0, px: 0.2, py: 0.1 }} aria-label="View generated SQL">
                   <Typography variant="subtitle2">View generated SQL</Typography>
                 </AccordionSummary>
-                <AccordionDetails sx={{ pt: 0, px: 1.25, pb: 1.15 }}>
+                <AccordionDetails sx={{ pt: 0, px: 0.2, pb: 1.05 }}>
                   <Typography component="pre" variant="body2" sx={{ m: 0, whiteSpace: "pre-wrap", fontFamily: "inherit" }}>
                     {result.sql}
                   </Typography>
@@ -225,6 +226,6 @@ export function DashboardWidget({
           </Stack>
         )}
       </Stack>
-    </SurfaceCard>
+    </OpenSection>
   );
 }

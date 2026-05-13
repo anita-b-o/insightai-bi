@@ -1,14 +1,14 @@
 export const tokens = {
   color: {
     bg: {
-      canvas: "#F4F7FA",
+      canvas: "#F8FAFC",
       surface: "#FFFFFF",
-      surfaceMuted: "#F6F8FB",
-      elevated: "#F1F4F8",
-      tint: "#E8F0FB",
+      surfaceMuted: "#F4F6F8",
+      elevated: "#F5F7FA",
+      tint: "#EEF3F8",
       inverse: "#0C1828",
-      accentWash: "#CEE1FB",
-      rail: "#F1F6FC",
+      accentWash: "#DFE8F6",
+      rail: "#F5F7FA",
     },
     fg: {
       primary: "#0F1D2D",
@@ -17,8 +17,8 @@ export const tokens = {
       inverse: "#F8FAFC",
     },
     border: {
-      subtle: "#C6D4E4",
-      strong: "#9FB4CB",
+      subtle: "#D9E0E8",
+      strong: "#B6C2CF",
     },
     accent: {
       blue: "#155EEF",
@@ -41,16 +41,16 @@ export const tokens = {
     chart: ["#1B63F0", "#0D94B8", "#167A50", "#C7831C", "#7551D8", "#D1495B", "#0F766E", "#4B5D73"],
   },
   radius: {
-    xs: 4,
-    sm: 6,
-    md: 8,
-    lg: 8,
+    xs: 2,
+    sm: 4,
+    md: 6,
+    lg: 6,
     pill: 999,
   },
   shadow: {
-    sm: "0 10px 28px rgba(12, 24, 40, 0.05)",
-    md: "0 18px 44px rgba(12, 24, 40, 0.08)",
-    lg: "0 30px 74px rgba(12, 24, 40, 0.12)",
+    sm: "0 8px 24px rgba(12, 24, 40, 0.06)",
+    md: "0 12px 32px rgba(12, 24, 40, 0.08)",
+    lg: "0 20px 48px rgba(12, 24, 40, 0.1)",
   },
   spacing: {
     1: 4,

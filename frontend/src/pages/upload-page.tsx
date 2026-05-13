@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import { PageHeader } from "@next/components/ui/page-header";
 import { PageSurface } from "@next/components/ui/page-surface";
-import { SurfaceCard } from "@next/components/ui/surface-card";
+import { OpenSection } from "@next/components/ui/surface-card";
 import { getApiErrorMessage } from "@next/core/api/errors";
 import { useUploadDataset } from "@next/features/datasets/hooks";
 
@@ -44,7 +44,7 @@ export function NextUploadPage() {
           title="Upload dataset"
           description="Send a CSV to the existing API, generate a schema profile, and prepare it for Ask AI and dashboards."
         />
-        <SurfaceCard tone="well">
+        <OpenSection divider="both" spacing={1.5} sx={{ maxWidth: 780 }}>
           <Stack component="form" spacing={2} onSubmit={handleSubmit}>
             {error ? <Alert severity="error">{error}</Alert> : null}
             <TextField label="Dataset name" value={name} onChange={(event) => setName(event.target.value)} required />
@@ -68,7 +68,7 @@ export function NextUploadPage() {
               {uploadMutation.isPending ? "Uploading..." : "Upload dataset"}
             </Button>
           </Stack>
-        </SurfaceCard>
+        </OpenSection>
       </Stack>
     </PageSurface>
   );

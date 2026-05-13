@@ -38,6 +38,7 @@ export function NextLoginPage() {
         title="Sign in"
         subtitle="Access datasets, Ask AI workflows, and persistent dashboards from a single analytics workspace."
         padding="md"
+        tone="panel"
       >
         <NextAuthForm
           mode="login"

@@ -15,9 +15,10 @@ export function DataTableFrame({
         overflowX: "auto",
         maxHeight,
         overflowY: maxHeight ? "auto" : undefined,
-        borderRadius: tokens.radius.xs,
-        border: `1px solid ${alpha(tokens.color.border.strong, 0.56)}`,
-        backgroundColor: tokens.color.bg.surface,
+        borderRadius: 0,
+        borderTop: `1px solid ${alpha(tokens.color.border.strong, 0.34)}`,
+        borderBottom: `1px solid ${alpha(tokens.color.border.strong, 0.34)}`,
+        backgroundColor: "transparent",
         boxShadow: "none",
         scrollbarWidth: "thin",
         "&::-webkit-scrollbar": {

@@ -2,7 +2,7 @@ import ExpandMoreRoundedIcon from "@mui/icons-material/ExpandMoreRounded";
 import { Accordion, AccordionDetails, AccordionSummary, Button, Chip, Stack, Typography } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 
-import { SurfaceCard } from "@next/components/ui/surface-card";
+import { OpenSection } from "@next/components/ui/surface-card";
 import { tokens } from "@next/theme/tokens";
 import { AIResultChart, getChartRenderState } from "@next/features/ai/components/ai-result-chart";
 import { AIResultTable } from "@next/features/ai/components/ai-result-table";
@@ -81,13 +81,13 @@ export function InsightCard({
   const showChart = chartState.status === "supported";
 
   return (
-    <SurfaceCard tone="quiet" padding="sm">
+    <OpenSection divider="top" spacing={1.65}>
       <Stack
-        spacing={2.4}
+        spacing={1.85}
         sx={{
-          pl: { xs: 1.5, md: 1.75 },
-          borderLeft: `3px solid ${accent}`,
-          py: 0.95,
+          pl: { xs: 1.15, md: 1.45 },
+          borderLeft: `2px solid ${accent}`,
+          py: 0.35,
         }}
       >
         <Stack spacing={1.1}>
@@ -120,18 +120,18 @@ export function InsightCard({
         {hasRows ? <AIResultTable columns={result.columns} rows={result.rows} title="Supporting result" maxHeight={220} compact={showChart} /> : null}
 
         {insight.sql ? (
-          <Accordion
-            disableGutters
-            elevation={0}
-            sx={{
-              borderTop: `1px solid ${alpha(tokens.color.border.strong, 0.42)}`,
-              backgroundColor: "transparent",
-              "&::before": { display: "none" },
-            }}
-          >
-            <AccordionSummary expandIcon={<ExpandMoreRoundedIcon />} sx={{ minHeight: 0, px: 0, py: 0.15 }}>
-              <Typography variant="subtitle2">View supporting SQL</Typography>
-            </AccordionSummary>
+            <Accordion
+              disableGutters
+              elevation={0}
+              sx={{
+                borderTop: `1px solid ${alpha(tokens.color.border.strong, 0.42)}`,
+                backgroundColor: "transparent",
+                "&::before": { display: "none" },
+              }}
+            >
+              <AccordionSummary expandIcon={<ExpandMoreRoundedIcon />} sx={{ minHeight: 0, px: 0, py: 0.15 }}>
+                <Typography variant="subtitle2">View supporting SQL</Typography>
+              </AccordionSummary>
             <AccordionDetails sx={{ px: 0, pt: 0 }}>
               <Typography
                 component="pre"
@@ -149,8 +149,8 @@ export function InsightCard({
               </Typography>
             </AccordionDetails>
           </Accordion>
-        ) : null}
+            ) : null}
       </Stack>
-    </SurfaceCard>
+    </OpenSection>
   );
 }

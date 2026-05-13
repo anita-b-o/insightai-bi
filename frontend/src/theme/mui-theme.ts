@@ -64,8 +64,8 @@ export const nextAppTheme = createTheme({
     MuiAppBar: {
       styleOverrides: {
         root: {
-          backgroundColor: alpha(tokens.color.bg.inverse, 0.96),
-          backdropFilter: "blur(18px)",
+          backgroundColor: tokens.color.bg.inverse,
+          backdropFilter: "none",
           borderBottom: `1px solid ${alpha(tokens.color.bg.surface, 0.08)}`,
           boxShadow: "none",
           color: tokens.color.fg.inverse,
@@ -88,8 +88,8 @@ export const nextAppTheme = createTheme({
       },
       styleOverrides: {
         root: {
-          borderRadius: tokens.radius.md,
-          border: `1px solid ${alpha(tokens.color.border.subtle, 0.82)}`,
+          borderRadius: tokens.radius.sm,
+          border: `1px solid ${alpha(tokens.color.border.subtle, 0.88)}`,
           boxShadow: "none",
           backgroundImage: "none",
         },
@@ -99,8 +99,8 @@ export const nextAppTheme = createTheme({
       styleOverrides: {
         root: {
           minHeight: 40,
-          borderRadius: 6,
-          paddingInline: 14,
+          borderRadius: tokens.radius.sm,
+          paddingInline: 13,
           boxShadow: "none",
         },
         contained: {
@@ -110,7 +110,7 @@ export const nextAppTheme = createTheme({
           background: tokens.color.accent.blue,
         },
         outlined: {
-          borderColor: tokens.color.border.strong,
+          borderColor: alpha(tokens.color.border.strong, 0.72),
           backgroundColor: tokens.color.bg.surface,
         },
       },
@@ -120,7 +120,7 @@ export const nextAppTheme = createTheme({
         root: {
           borderRadius: tokens.radius.pill,
           fontWeight: 600,
-          height: 25,
+          height: 24,
         },
       },
     },
@@ -139,7 +139,7 @@ export const nextAppTheme = createTheme({
         head: {
           color: tokens.color.fg.secondary,
           fontWeight: 700,
-          letterSpacing: "0.04em",
+          letterSpacing: "0.06em",
           textTransform: "uppercase",
           fontSize: 12,
         },
@@ -153,7 +153,7 @@ export const nextAppTheme = createTheme({
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
-          borderRadius: 6,
+          borderRadius: tokens.radius.sm,
         },
       },
     },
