@@ -298,12 +298,10 @@ export function InlineStatItem({ label, value, detail }: { label: string; value:
 export function MetricStrip({
   children,
   desktopColumns = 3,
-  accent = false,
-}: PropsWithChildren<{ desktopColumns?: 3 | 4; accent?: boolean }>) {
+}: PropsWithChildren<{ desktopColumns?: 3 | 4 }>) {
   return (
     <Box
       sx={{
-        position: "relative",
         display: "grid",
         gridTemplateColumns: {
           xs: "1fr",
@@ -315,16 +313,6 @@ export function MetricStrip({
         backgroundColor: alpha(tokens.color.border.strong, 0.14),
         borderTop: `1px solid ${alpha(tokens.color.border.strong, 0.2)}`,
         borderBottom: `1px solid ${alpha(tokens.color.border.strong, 0.2)}`,
-        "&::before": accent
-          ? {
-              content: '""',
-              position: "absolute",
-              insetInline: 0,
-              top: 0,
-              height: 1,
-              backgroundColor: alpha(tokens.color.accent.blue, 0.7),
-            }
-          : undefined,
       }}
     >
       {children}

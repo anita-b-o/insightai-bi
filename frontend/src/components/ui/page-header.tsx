@@ -24,16 +24,6 @@ export function PageHeader({
       sx={{
         pb: 1.75,
         borderBottom: `1px solid ${alpha(tokens.color.border.strong, 0.28)}`,
-        position: "relative",
-        "&::before": {
-          content: '""',
-          position: "absolute",
-          left: 0,
-          bottom: -1,
-          width: { xs: 36, md: 56 },
-          height: 1,
-          background: alpha(tokens.color.accent.blue, 0.76),
-        },
       }}
     >
       <Stack spacing={1}>

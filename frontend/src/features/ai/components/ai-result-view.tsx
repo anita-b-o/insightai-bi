@@ -53,7 +53,7 @@ export function AIResultView({
         </Stack>
       </OpenSection>
 
-      <ResultSection title="Answer" accent={tokens.color.accent.blue}>
+      <ResultSection title="Answer">
         <Typography variant="body1">{result.answer}</Typography>
       </ResultSection>
 
@@ -89,7 +89,7 @@ export function AIResultView({
       ) : null}
 
       {result.sql ? (
-        <ResultSection title="Query details" accent={tokens.color.accent.cyan}>
+        <ResultSection title="Query details">
           <Accordion
             disableGutters
             elevation={0}
@@ -125,7 +125,7 @@ export function AIResultView({
       ) : null}
 
       {result.chart_suggestion ? (
-        <ResultSection title="Backend chart hint" accent={tokens.color.accent.plum}>
+        <ResultSection title="Backend chart hint">
           <Typography variant="body2" color="text.secondary">
             {result.chart_suggestion.type}
             {result.chart_suggestion.explanation ? ` — ${result.chart_suggestion.explanation}` : ""}
@@ -136,23 +136,13 @@ export function AIResultView({
   );
 }
 
-function ResultSection({ title, children, accent }: { title: string; children: ReactNode; accent: string }) {
+function ResultSection({ title, children }: { title: string; children: ReactNode }) {
   return (
     <Stack
       spacing={1}
       sx={{
         pt: 1.35,
         borderTop: `1px solid ${alpha(tokens.color.border.strong, 0.42)}`,
-        position: "relative",
-        "&::before": {
-          content: '""',
-          position: "absolute",
-          top: -1,
-          left: 0,
-          width: 44,
-          height: 2,
-          bgcolor: accent,
-        },
       }}
     >
       <Typography variant="h6">{title}</Typography>
