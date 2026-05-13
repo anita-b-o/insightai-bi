@@ -3,3 +3,7 @@ frontend/.env
 deploy/compose.prod.env
 deploy/backend.prod.env
 backups/
+
+# Build artifacts
+frontend/dist/
+frontend/node_modules/
