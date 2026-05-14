@@ -1,4 +1,3 @@
-import { alpha } from "@mui/material/styles";
 import { Button, Stack, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 
@@ -12,9 +11,9 @@ export function DashboardCard({ dashboard }: { dashboard: DashboardSummary }) {
     <OpenSection divider="top" spacing={1}>
       <Stack
         direction={{ xs: "column", md: "row" }}
-      spacing={1.5}
-      justifyContent="space-between"
-      alignItems={{ xs: "flex-start", md: "center" }}
+        spacing={1.5}
+        justifyContent="space-between"
+        alignItems={{ xs: "flex-start", md: "center" }}
         sx={{ py: 0.75 }}
       >
         <Stack spacing={0.75} sx={{ minWidth: 0 }}>

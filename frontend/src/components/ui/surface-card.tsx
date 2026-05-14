@@ -47,7 +47,7 @@ export function SurfaceCard({
     },
     hero: {
       backgroundColor: tokens.color.bg.surface,
-      borderTop: `2px solid ${alpha(tokens.color.accent.blue, 0.82)}`,
+      borderTop: `1px solid ${tokens.color.border.subtle}`,
       borderBottom: `1px solid ${alpha(tokens.color.border.strong, 0.34)}`,
       borderLeft: "none",
       borderRight: "none",
@@ -88,7 +88,7 @@ export function InverseHeroCard({ children }: PropsWithChildren) {
   return (
     <Box
       sx={{
-        borderTop: `2px solid ${alpha(tokens.color.accent.blue, 0.86)}`,
+        borderTop: `1px solid ${tokens.color.border.subtle}`,
         borderBottom: `1px solid ${alpha(tokens.color.border.strong, 0.32)}`,
         backgroundColor: alpha(tokens.color.bg.inverse, 0.02),
       }}
