@@ -9,6 +9,16 @@ import { DashboardWidget } from "@next/features/dashboards/components/dashboard-
 import type { DemoExperience } from "../types";
 
 export function DemoDashboardPreview({ demo }: { demo: DemoExperience }) {
+  const previewWidgets = demo.dashboard.widgets.map((widget) => ({
+    ...widget,
+    layout: {
+      ...widget.layout,
+      // Demo widgets render chart + supporting table together, so the saved 8-row
+      // showcase height is too short for the editorial preview on larger screens.
+      height: Math.max(widget.layout.height, 16),
+    },
+  }));
+
   return (
     <SectionBand
       eyebrow="Saved workspace"
@@ -40,7 +50,7 @@ export function DemoDashboardPreview({ demo }: { demo: DemoExperience }) {
         </Stack>
 
         <DashboardGrid
-          widgets={demo.dashboard.widgets}
+          widgets={previewWidgets}
           renderWidget={(widget) => <DashboardWidget widget={widget} readOnly onRefresh={() => undefined} />}
         />
       </Stack>
