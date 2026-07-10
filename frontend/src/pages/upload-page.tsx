@@ -57,12 +57,15 @@ export function NextUploadPage() {
             />
             <Stack spacing={0.75}>
               <Typography variant="subtitle2">CSV file</Typography>
-              <input
-                type="file"
-                accept=".csv"
-                onChange={(event) => setFile(event.target.files?.[0] ?? null)}
-                required
-              />
+              <Stack direction={{ xs: "column", sm: "row" }} spacing={1.25} alignItems={{ xs: "stretch", sm: "center" }}>
+                <Button variant="outlined" component="label">
+                  Choose CSV
+                  <input hidden type="file" accept=".csv" onChange={(event) => setFile(event.target.files?.[0] ?? null)} />
+                </Button>
+                <Typography variant="body2" color="text.secondary">
+                  {file ? file.name : "No CSV selected"}
+                </Typography>
+              </Stack>
             </Stack>
             <Button type="submit" variant="contained" disabled={uploadMutation.isPending}>
               {uploadMutation.isPending ? "Uploading..." : "Upload dataset"}
