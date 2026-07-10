@@ -28,6 +28,10 @@ export interface SharedDashboardDetail {
 }
 
 export function toAliasedShareUrl(shareUrl: string): string {
+  if (!shareUrl) {
+    return "";
+  }
+
   if (shareUrl.startsWith("http://") || shareUrl.startsWith("https://")) {
     return shareUrl.replace("/public/dashboards/", "/share/");
   }

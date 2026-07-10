@@ -18,8 +18,13 @@ export function NextUploadPage() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (!name.trim()) {
+      setError("Enter a dataset name.");
+      return;
+    }
+
     if (!file) {
-      setError("Select a CSV file");
+      setError("Select a CSV file.");
       return;
     }
 
@@ -45,9 +50,16 @@ export function NextUploadPage() {
           description="Send a CSV to the existing API, generate a schema profile, and prepare it for Ask AI and dashboards."
         />
         <OpenSection divider="both" spacing={1.5} sx={{ maxWidth: 780 }}>
-          <Stack component="form" spacing={2} onSubmit={handleSubmit}>
+          <Stack component="form" spacing={2} onSubmit={handleSubmit} noValidate>
             {error ? <Alert severity="error">{error}</Alert> : null}
-            <TextField label="Dataset name" value={name} onChange={(event) => setName(event.target.value)} required />
+            <TextField
+              label="Dataset name"
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              required
+              error={error === "Enter a dataset name."}
+              helperText={error === "Enter a dataset name." ? "Dataset name is required." : undefined}
+            />
             <TextField
               label="Description"
               value={description}

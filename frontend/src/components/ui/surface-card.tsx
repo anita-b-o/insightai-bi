@@ -260,6 +260,9 @@ export function InlineStatRow({
         borderTop: topBorder ? `1px solid ${alpha(tokens.color.border.strong, 0.22)}` : "none",
         borderBottom: bottomBorder ? `1px solid ${alpha(tokens.color.border.strong, 0.22)}` : "none",
         backgroundColor: alpha(tokens.color.border.strong, 0.2),
+        "& > :nth-of-type(3):last-child": {
+          gridColumn: { sm: "1 / -1", lg: "auto" },
+        },
       }}
     >
       {children}
@@ -273,7 +276,7 @@ export function InlineStatItem({ label, value, detail }: { label: string; value:
       spacing={0.45}
       sx={{
         py: { xs: 1.15, md: 1.35 },
-        px: { xs: 0.15, sm: 1.2, lg: 1.45 },
+        px: { xs: 1.15, sm: 1.2, lg: 1.45 },
         minWidth: 0,
         backgroundColor: tokens.color.bg.surface,
       }}
@@ -313,6 +316,9 @@ export function MetricStrip({
         backgroundColor: alpha(tokens.color.border.strong, 0.18),
         borderTop: `1px solid ${alpha(tokens.color.border.strong, 0.2)}`,
         borderBottom: `1px solid ${alpha(tokens.color.border.strong, 0.2)}`,
+        "& > :nth-of-type(3):last-child": {
+          gridColumn: { sm: "1 / -1", lg: "auto" },
+        },
       }}
     >
       {children}
@@ -326,7 +332,7 @@ export function MetricStripItem({ label, value, detail }: { label: string; value
       spacing={0.55}
       sx={{
         py: { xs: 1.25, md: 1.45 },
-        px: { xs: 0.2, sm: 1.15, lg: 1.45 },
+        px: { xs: 1.15, sm: 1.15, lg: 1.45 },
         minWidth: 0,
         backgroundColor: tokens.color.bg.surface,
         justifyContent: "center",

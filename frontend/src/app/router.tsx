@@ -179,7 +179,7 @@ export function AppRouter() {
           <Route
             path="/demo"
             element={
-              <NextPublicLayout>
+              <NextPublicLayout framed={false}>
                 <DemoPage />
               </NextPublicLayout>
             }

@@ -32,7 +32,7 @@ export function PageHeader({
         background: `linear-gradient(135deg, ${alpha(tokens.color.bg.surface, 0.92)} 0%, ${alpha(tokens.color.bg.elevated, 0.8)} 100%)`,
       }}
     >
-      <GeoPattern density="quiet" sx={{ display: { xs: "none", sm: "block" }, left: "auto", width: { sm: 220, md: 320 }, opacity: 0.18 }} />
+      <GeoPattern density="quiet" sx={{ display: { xs: "none", lg: "block" }, left: "auto", width: { lg: 320 }, opacity: 0.18 }} />
       <Stack spacing={1} sx={{ position: "relative", zIndex: 1 }}>
         {typeof eyebrow === "string" ? (
           <Typography variant="overline" color="text.secondary">

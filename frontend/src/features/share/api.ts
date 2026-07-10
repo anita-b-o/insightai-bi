@@ -39,7 +39,11 @@ interface RawDashboardWidget extends Omit<DashboardWidget, "source"> {
   } | null;
 }
 
-interface RawDashboardShareLink extends Omit<DashboardShareLink, never> {}
+interface RawDashboardShareLink extends Omit<DashboardShareLink, "share_url"> {
+  share_url?: string | null;
+  url?: string | null;
+  token?: string | null;
+}
 
 interface RawSharedDashboardDetail extends Omit<SharedDashboardDetail, "widgets" | "narrative"> {
   widgets: RawDashboardWidget[];
@@ -108,13 +112,15 @@ function normalizeNarrative(narrative: DashboardNarrative | null | undefined): D
 }
 
 function normalizeShareLink(link: RawDashboardShareLink): DashboardShareLink {
+  const fallbackShareUrl = link.token ? `/share/${encodeURIComponent(link.token)}` : "";
+
   return {
     id: link.id,
     dashboard_id: link.dashboard_id,
     expires_at: link.expires_at ?? null,
     revoked_at: link.revoked_at ?? null,
     created_at: link.created_at,
-    share_url: link.share_url,
+    share_url: link.share_url ?? link.url ?? fallbackShareUrl,
   };
 }
 

@@ -5,7 +5,6 @@ import UploadFileRoundedIcon from "@mui/icons-material/UploadFileRounded";
 import RocketLaunchRoundedIcon from "@mui/icons-material/RocketLaunchRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import {
-  AppBar,
   Avatar,
   Box,
   Button,
@@ -17,7 +16,6 @@ import {
   ListItemIcon,
   ListItemText,
   Stack,
-  Toolbar,
   Typography,
 } from "@mui/material";
 import { alpha } from "@mui/material/styles";
@@ -37,8 +35,6 @@ const navigationItems = [
   { label: "Dashboards", to: "/dashboards", icon: <SpaceDashboardRoundedIcon /> },
   { label: "Demo", to: "/demo", icon: <RocketLaunchRoundedIcon /> },
 ] as const;
-
-const APP_BAR_HEIGHT = 72;
 
 function AppNavigation({ onNavigate }: { onNavigate?: () => void }) {
   const location = useLocation();
@@ -165,52 +161,22 @@ export function NextAppShell() {
           backgroundColor: tokens.color.bg.canvas,
         }}
       >
-        <AppBar position="sticky" color="inherit">
-          <Toolbar sx={{ minHeight: APP_BAR_HEIGHT, flexShrink: 0 }}>
-            <Stack direction="row" spacing={1.5} alignItems="center" sx={{ flexGrow: 1 }}>
-              <IconButton aria-label="Open navigation menu" sx={{ display: { lg: "none" } }} onClick={() => setMobileOpen(true)}>
-                <MenuRoundedIcon />
-              </IconButton>
-              <InsightBrand variant="mark" tone="inverse" compact sx={{ display: { xs: "block", sm: "none" } }} />
-              <Box>
-                <InsightBrand tone="inverse" sx={{ display: { xs: "none", sm: "flex" } }} />
-              </Box>
-            </Stack>
-            <Stack direction="row" spacing={1.25} alignItems="center">
-              <Button
-                component={RouterLink}
-                to="/demo"
-                variant="outlined"
-                sx={{
-                  color: tokens.color.fg.inverse,
-                  borderColor: alpha(tokens.color.bg.surface, 0.26),
-                  backgroundColor: alpha(tokens.color.bg.surface, 0.06),
-                }}
-              >
-                Open demo
-              </Button>
-              <Box
-                sx={{
-                  display: { xs: "none", md: "flex" },
-                  alignItems: "center",
-                  gap: 1.25,
-                  px: 1.25,
-                  py: 0.75,
-                  borderRadius: tokens.radius.xs,
-                  backgroundColor: alpha(tokens.color.bg.surface, 0.08),
-                  border: `1px solid ${alpha(tokens.color.bg.surface, 0.12)}`,
-                }}
-              >
-                <Avatar sx={{ width: 30, height: 30, bgcolor: alpha(tokens.color.bg.surface, 0.14), color: tokens.color.fg.inverse }}>
-                  {initials}
-                </Avatar>
-                <Typography variant="body2" sx={{ color: alpha(tokens.color.fg.inverse, 0.76) }}>
-                  {user?.full_name}
-                </Typography>
-              </Box>
-            </Stack>
-          </Toolbar>
-        </AppBar>
+        <Box
+          component="header"
+          sx={{
+            display: { xs: "flex", lg: "none" },
+            flexShrink: 0,
+            height: 56,
+            alignItems: "center",
+            px: 1.25,
+            backgroundColor: tokens.color.bg.canvas,
+            borderBottom: `1px solid ${tokens.color.border.subtle}`,
+          }}
+        >
+          <IconButton aria-label="Open navigation menu" onClick={() => setMobileOpen(true)}>
+            <MenuRoundedIcon />
+          </IconButton>
+        </Box>
 
         <Drawer
           open={mobileOpen}

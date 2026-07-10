@@ -1,4 +1,4 @@
-import { Stack } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 
 import { PageSurface } from "@next/components/ui/page-surface";
 import { DemoAIShowcase } from "@next/features/demo/components/demo-ai-showcase";
@@ -11,13 +11,15 @@ export function NextDemoPage() {
   const demo = useDemoExperience();
 
   return (
-    <PageSurface variant="workspace">
-      <Stack spacing={5}>
-        <DemoHero demo={demo} />
-        <DemoDatasetPreview dataset={demo.dataset} />
-        <DemoAIShowcase demo={demo} />
-        <DemoDashboardPreview demo={demo} />
-      </Stack>
-    </PageSurface>
+    <Box component="main">
+      <DemoHero demo={demo} />
+      <PageSurface variant="workspace">
+        <Stack spacing={5}>
+          <DemoDatasetPreview dataset={demo.dataset} />
+          <DemoAIShowcase demo={demo} />
+          <DemoDashboardPreview demo={demo} />
+        </Stack>
+      </PageSurface>
+    </Box>
   );
 }

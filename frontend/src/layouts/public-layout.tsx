@@ -4,10 +4,10 @@ import { PageSurface } from "@next/components/ui/page-surface";
 
 import { NextThemeBoundary } from "./theme-boundary";
 
-export function NextPublicLayout({ children }: PropsWithChildren) {
+export function NextPublicLayout({ children, framed = true }: PropsWithChildren<{ framed?: boolean }>) {
   return (
     <NextThemeBoundary>
-      <PageSurface>{children}</PageSurface>
+      {framed ? <PageSurface>{children}</PageSurface> : children}
     </NextThemeBoundary>
   );
 }
