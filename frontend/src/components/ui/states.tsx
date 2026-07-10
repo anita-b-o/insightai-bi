@@ -3,10 +3,11 @@ import { Alert, AlertTitle, Box, Button, Skeleton, Stack, Typography } from "@mu
 import { alpha } from "@mui/material/styles";
 
 import { OpenSection, SectionBlock } from "./surface-card";
+import { GeoPattern } from "@next/components/brand/geo-pattern";
 import { tokens } from "@next/theme/tokens";
 
 export function LoadingState({
-  title = "Loading",
+  title = "Finding the signal",
   description = "Fetching data from the API.",
 }: {
   title?: string;
@@ -39,18 +40,39 @@ export function EmptyState({
   action?: ReactNode;
 }) {
   return (
-    <SectionBlock eyebrow="Empty state" title={title} description={description} divider="top">
+    <OpenSection divider="top">
+      <Box
+        sx={{
+          position: "relative",
+          overflow: "hidden",
+          borderRadius: tokens.radius.lg,
+          border: `1px solid ${alpha(tokens.color.border.strong, 0.34)}`,
+          backgroundColor: tokens.color.bg.surface,
+          px: { xs: 1.75, md: 2.15 },
+          py: { xs: 1.8, md: 2.15 },
+        }}
+      >
+        <GeoPattern density="quiet" sx={{ left: "auto", width: { xs: 160, md: 260 }, opacity: 0.18 }} />
+        <Stack spacing={1.1} sx={{ position: "relative", zIndex: 1, maxWidth: 720 }}>
+          <Typography variant="overline" color="text.secondary">
+            Empty state
+          </Typography>
+          <Typography variant="h5">{title}</Typography>
+          <Typography variant="body2" color="text.secondary">
+            {description}
+          </Typography>
       {action ? (
         <Box
           sx={{
             pt: 0.25,
-            borderTop: `1px solid ${alpha(tokens.color.border.strong, 0.2)}`,
           }}
         >
           {action}
         </Box>
       ) : null}
-    </SectionBlock>
+        </Stack>
+      </Box>
+    </OpenSection>
   );
 }
 

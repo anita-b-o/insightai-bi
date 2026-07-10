@@ -99,7 +99,19 @@ export function InsightCard({
         </Stack>
 
         <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ rowGap: 1 }}>
-          <Chip size="small" color={severityTone(insight.severity)} label={insight.severity} />
+          <Chip
+            size="small"
+            color={severityTone(insight.severity)}
+            label={insight.severity}
+            sx={
+              insight.severity === "info"
+                ? {
+                    backgroundColor: tokens.color.status.infoBg,
+                    color: tokens.color.status.infoFg,
+                  }
+                : undefined
+            }
+          />
           <Chip size="small" variant="outlined" label={`Priority ${insight.priority}`} />
           {insight.metric ? <Chip size="small" variant="outlined" label={`Metric ${insight.metric}`} /> : null}
           {insight.dimension ? <Chip size="small" variant="outlined" label={`Dimension ${insight.dimension}`} /> : null}

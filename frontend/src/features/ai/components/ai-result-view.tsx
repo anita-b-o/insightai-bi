@@ -109,12 +109,16 @@ export function AIResultView({
                 component="pre"
                 sx={{
                   m: 0,
-                  fontFamily: "Monaco, Consolas, 'Courier New', monospace",
+                  fontFamily: '"Cascadia Mono", "SFMono-Regular", Consolas, monospace',
                   fontSize: 13,
                   lineHeight: 1.5,
                   whiteSpace: "pre-wrap",
                   wordBreak: "break-word",
                   color: tokens.color.fg.primary,
+                  backgroundColor: tokens.color.bg.surfaceMuted,
+                  border: `1px solid ${alpha(tokens.color.border.strong, 0.28)}`,
+                  borderRadius: tokens.radius.sm,
+                  p: 1.2,
                 }}
               >
                 {result.sql}

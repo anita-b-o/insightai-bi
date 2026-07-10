@@ -10,6 +10,8 @@ export function DataTableFrame({
 }: PropsWithChildren<{ maxHeight?: number | string }>) {
   return (
     <TableContainer
+      tabIndex={0}
+      aria-label="Scrollable data table"
       sx={{
         width: "100%",
         overflowX: "auto",
@@ -18,7 +20,7 @@ export function DataTableFrame({
         borderRadius: 0,
         borderTop: `1px solid ${alpha(tokens.color.border.strong, 0.34)}`,
         borderBottom: `1px solid ${alpha(tokens.color.border.strong, 0.34)}`,
-        backgroundColor: "transparent",
+        backgroundColor: tokens.color.bg.surface,
         boxShadow: "none",
         scrollbarWidth: "thin",
         "&::-webkit-scrollbar": {

@@ -335,6 +335,15 @@ function TooltipContent({
   );
 }
 
+function ScatterPointShape(props: unknown) {
+  const { cx, cy, fill } = props as { cx?: number; cy?: number; fill?: string };
+  if (typeof cx !== "number" || typeof cy !== "number") {
+    return <g aria-hidden="true" />;
+  }
+
+  return <circle cx={cx} cy={cy} r={4} fill={fill ?? tokens.color.chart[4]} aria-hidden="true" focusable="false" />;
+}
+
 function buildChartElement(model: ChartModel, palette: readonly string[]) {
   switch (model.type) {
     case "bar":
@@ -380,7 +389,7 @@ function buildChartElement(model: ChartModel, palette: readonly string[]) {
           <ZAxis range={[50, 50]} />
           <Tooltip content={<TooltipContent />} cursor={{ strokeDasharray: "3 3" }} />
           <Legend wrapperStyle={{ paddingTop: 12, fontSize: 11 }} />
-          <Scatter name={formatChartLabel(model.yKey)} fill={palette[4]} />
+          <Scatter name={formatChartLabel(model.yKey)} fill={palette[4]} shape={ScatterPointShape} />
         </ScatterChart>
       );
   }
@@ -416,6 +425,7 @@ export function AIResultChart({ result }: { result: AIQueryResponse }) {
       ) : null}
 
       <Box
+        aria-hidden="true"
         sx={{
           width: "100%",
           height: resolveChartHeight(model),

@@ -17,14 +17,14 @@ const BREAKPOINT_COLS = {
 
 function resolveMinimumHeight(widget: DashboardWidgetModel) {
   if (widget.widget_type === "chart" || widget.type === "chart") {
-    return 10;
+    return 13;
   }
 
   if (widget.widget_type === "insight" || widget.type === "insight") {
-    return 8;
+    return 13;
   }
 
-  return 7;
+  return 9;
 }
 
 function buildGridLayouts(widgets: DashboardWidgetModel[]): ResponsiveLayouts {
@@ -45,7 +45,25 @@ function buildGridLayouts(widgets: DashboardWidgetModel[]): ResponsiveLayouts {
     };
   };
 
-  const buildForCols = (cols: number): Layout => widgets.map((widget) => mapWidget(widget, cols));
+  const buildForCols = (cols: number): Layout => {
+    const orderedWidgets = [...widgets].sort((left, right) => left.layout.order - right.layout.order);
+    const columnHeights = Array.from({ length: cols }, () => 0);
+
+    return orderedWidgets.map((widget) => {
+      const item = mapWidget(widget, cols);
+      const firstColumn = Math.max(0, Math.min(item.x, cols - item.w));
+      const occupiedColumns = Array.from({ length: item.w }, (_, index) => firstColumn + index).filter((column) => column < cols);
+      const nextY = Math.max(item.y, ...occupiedColumns.map((column) => columnHeights[column] ?? 0));
+
+      item.x = firstColumn;
+      item.y = nextY;
+      occupiedColumns.forEach((column) => {
+        columnHeights[column] = nextY + item.h;
+      });
+
+      return item;
+    });
+  };
 
   return {
     lg: buildForCols(BREAKPOINT_COLS.lg),

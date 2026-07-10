@@ -1,5 +1,4 @@
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
-import AutoGraphRoundedIcon from "@mui/icons-material/AutoGraphRounded";
 import DatasetRoundedIcon from "@mui/icons-material/DatasetRounded";
 import SpaceDashboardRoundedIcon from "@mui/icons-material/SpaceDashboardRounded";
 import UploadFileRoundedIcon from "@mui/icons-material/UploadFileRounded";
@@ -25,6 +24,8 @@ import { alpha } from "@mui/material/styles";
 import { useMemo, useState } from "react";
 import { Link as RouterLink, Outlet, useLocation } from "react-router-dom";
 
+import { GeoPattern } from "@next/components/brand/geo-pattern";
+import { InsightBrand } from "@next/components/brand/insight-brand";
 import { useAuth } from "@next/core/auth/session";
 import { tokens } from "@next/theme/tokens";
 
@@ -44,14 +45,7 @@ function AppNavigation({ onNavigate }: { onNavigate?: () => void }) {
 
   return (
     <Stack spacing={1.25} sx={{ flexShrink: 0 }}>
-      <Stack spacing={0.75}>
-        <Typography variant="overline" sx={{ color: alpha(tokens.color.fg.inverse, 0.58) }}>
-          Workspace
-        </Typography>
-        <Typography variant="h6" sx={{ color: tokens.color.fg.inverse }}>
-          InsightAI BI
-        </Typography>
-      </Stack>
+      <InsightBrand tone="inverse" />
       <List disablePadding sx={{ display: "grid", gap: 0.5 }}>
         {navigationItems.map((item) => {
           const selected = location.pathname === item.to || location.pathname.startsWith(`${item.to}/`);
@@ -66,8 +60,11 @@ function AppNavigation({ onNavigate }: { onNavigate?: () => void }) {
                 borderRadius: tokens.radius.xs,
                 alignItems: "center",
                 color: alpha(tokens.color.fg.inverse, selected ? 1 : 0.78),
-                backgroundColor: selected ? alpha(tokens.color.bg.surface, 0.06) : "transparent",
-                borderLeft: selected ? `2px solid ${tokens.color.accent.cyan}` : "2px solid transparent",
+                backgroundColor: selected ? alpha(tokens.color.bg.surface, 0.12) : "transparent",
+                borderLeft: selected ? `3px solid ${tokens.color.accent.signal}` : "3px solid transparent",
+                "&:hover": {
+                  backgroundColor: alpha(tokens.color.bg.surface, 0.1),
+                },
                 "& .MuiListItemIcon-root": {
                   color: alpha(tokens.color.fg.inverse, selected ? 1 : 0.72),
                 },
@@ -103,15 +100,19 @@ export function NextAppShell() {
       sx={{
         height: "100%",
         p: 2,
-        background: `linear-gradient(180deg, ${tokens.color.bg.inverse} 0%, #122236 100%)`,
+        position: "relative",
+        background: `linear-gradient(180deg, ${tokens.color.bg.inverse} 0%, #064232 100%)`,
         color: tokens.color.fg.inverse,
         display: "flex",
         flexDirection: "column",
         overflow: "hidden",
       }}
     >
+      <GeoPattern inverted density="quiet" sx={{ opacity: 0.09 }} />
       <Box
         sx={{
+          position: "relative",
+          zIndex: 1,
           flex: 1,
           minHeight: 0,
           overflowY: "auto",
@@ -120,10 +121,10 @@ export function NextAppShell() {
         }}
       >
         <Stack spacing={2} sx={{ flexShrink: 0 }}>
-        <AppNavigation onNavigate={() => setMobileOpen(false)} />
+          <AppNavigation onNavigate={() => setMobileOpen(false)} />
         </Stack>
       </Box>
-      <Stack spacing={2} sx={{ flexShrink: 0, mt: "auto" }}>
+      <Stack spacing={2} sx={{ position: "relative", zIndex: 1, flexShrink: 0, mt: "auto" }}>
         <Divider />
         <Stack direction="row" spacing={1.5} alignItems="center">
           <Avatar sx={{ bgcolor: alpha(tokens.color.bg.surface, 0.14), color: tokens.color.fg.inverse }}>{initials}</Avatar>
@@ -170,26 +171,9 @@ export function NextAppShell() {
               <IconButton aria-label="Open navigation menu" sx={{ display: { lg: "none" } }} onClick={() => setMobileOpen(true)}>
                 <MenuRoundedIcon />
               </IconButton>
-              <Box
-                sx={{
-                  width: 42,
-                  height: 42,
-                  borderRadius: tokens.radius.sm,
-                  background: `linear-gradient(135deg, ${tokens.color.accent.blue} 0%, ${tokens.color.accent.cyan} 100%)`,
-                  display: "grid",
-                  placeItems: "center",
-                  color: tokens.color.fg.inverse,
-                }}
-              >
-                <AutoGraphRoundedIcon fontSize="small" />
-              </Box>
+              <InsightBrand variant="mark" tone="inverse" compact sx={{ display: { xs: "block", sm: "none" } }} />
               <Box>
-                <Typography variant="subtitle1" sx={{ color: tokens.color.fg.inverse }}>
-                  InsightAI BI
-                </Typography>
-                <Typography variant="body2" sx={{ color: alpha(tokens.color.fg.inverse, 0.66) }}>
-                  Editorial analytics workspace
-                </Typography>
+                <InsightBrand tone="inverse" sx={{ display: { xs: "none", sm: "flex" } }} />
               </Box>
             </Stack>
             <Stack direction="row" spacing={1.25} alignItems="center">
@@ -199,8 +183,8 @@ export function NextAppShell() {
                 variant="outlined"
                 sx={{
                   color: tokens.color.fg.inverse,
-                  borderColor: alpha(tokens.color.bg.surface, 0.18),
-                  backgroundColor: alpha(tokens.color.bg.surface, 0.04),
+                  borderColor: alpha(tokens.color.bg.surface, 0.26),
+                  backgroundColor: alpha(tokens.color.bg.surface, 0.06),
                 }}
               >
                 Open demo
@@ -209,12 +193,12 @@ export function NextAppShell() {
                 sx={{
                   display: { xs: "none", md: "flex" },
                   alignItems: "center",
-                gap: 1.25,
-                px: 1.25,
-                py: 0.75,
+                  gap: 1.25,
+                  px: 1.25,
+                  py: 0.75,
                   borderRadius: tokens.radius.xs,
-                  backgroundColor: alpha(tokens.color.bg.surface, 0.05),
-                  border: `1px solid ${alpha(tokens.color.bg.surface, 0.06)}`,
+                  backgroundColor: alpha(tokens.color.bg.surface, 0.08),
+                  border: `1px solid ${alpha(tokens.color.bg.surface, 0.12)}`,
                 }}
               >
                 <Avatar sx={{ width: 30, height: 30, bgcolor: alpha(tokens.color.bg.surface, 0.14), color: tokens.color.fg.inverse }}>

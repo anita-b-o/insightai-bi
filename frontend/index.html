@@ -4,12 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>InsightAI BI</title>
+    <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect x="2" y="2" width="60" height="60" rx="9" fill="%23075E46"/><path d="M10 12h44v16H10z" fill="%23F4A300"/><circle cx="38" cy="39" r="15" fill="%23F4A300"/><path d="M23 16a22 22 0 0 1 22 22H23z" fill="%23F0642E"/><path d="M19 35l29-10 7 14-29 10z" fill="%23FFFDF7"/><circle cx="18" cy="18" r="4.4" fill="%23FFFDF7"/><circle cx="48" cy="48" r="4.4" fill="%23FFFDF7"/></svg>' />
     <style>
       :root {
         color-scheme: light;
-        font-family: "Inter", "Segoe UI", sans-serif;
-        background: #f4f7fa;
-        color: #0f1d2d;
+        font-family: "Aptos", "Inter", "Segoe UI", system-ui, sans-serif;
+        background: #f3ebdd;
+        color: #18342b;
       }
 
       * {
@@ -18,25 +19,42 @@
 
       body {
         margin: 0;
-        background: #f4f7fa;
-        color: #0f1d2d;
+        background: #f3ebdd;
+        color: #18342b;
       }
 
       .boot-shell {
         min-height: 100dvh;
         display: grid;
         grid-template-columns: minmax(0, 1fr);
-        background: #f4f7fa;
+        background:
+          radial-gradient(rgba(24, 52, 43, 0.055) 0.7px, transparent 0.7px) 0 0 / 14px 14px,
+          #f3ebdd;
       }
 
       .boot-panel {
+        position: relative;
+        overflow: hidden;
         width: min(720px, calc(100vw - 32px));
         margin: auto;
-        border: 1px solid rgba(159, 180, 203, 0.34);
-        border-radius: 16px;
-        background: #ffffff;
+        border: 1px solid rgba(200, 174, 136, 0.48);
+        border-radius: 8px;
+        background: #fffdf7;
         padding: 24px;
-        box-shadow: 0 10px 28px rgba(12, 24, 40, 0.05);
+        box-shadow: 0 10px 28px rgba(24, 52, 43, 0.07);
+      }
+
+      .boot-panel::before {
+        content: "";
+        position: absolute;
+        inset: 0 0 0 auto;
+        width: min(280px, 42vw);
+        opacity: 0.18;
+        background:
+          linear-gradient(90deg, transparent 0 16%, #f0642e 16% 44%, #075e46 44% 66%, #f4a300 66% 100%),
+          radial-gradient(circle at 32% 26%, #075e46 0 26px, transparent 27px),
+          radial-gradient(circle at 76% 68%, #f4a300 0 42px, transparent 43px);
+        background-blend-mode: normal;
       }
 
       .boot-kicker {
@@ -45,7 +63,7 @@
         font-weight: 700;
         letter-spacing: 0.12em;
         text-transform: uppercase;
-        color: #3d536c;
+        color: #526b5f;
       }
 
       .boot-title {
@@ -59,14 +77,14 @@
         max-width: 42rem;
         font-size: 18px;
         line-height: 1.55;
-        color: #3d536c;
+        color: #526b5f;
       }
 
       .boot-bar {
         height: 10px;
         border-radius: 999px;
         margin-top: 20px;
-        background: linear-gradient(90deg, rgba(21, 94, 239, 0.16), rgba(11, 143, 178, 0.08));
+        background: linear-gradient(90deg, rgba(7, 94, 70, 0.14), rgba(244, 163, 0, 0.12));
         overflow: hidden;
       }
 
@@ -76,7 +94,7 @@
         width: 36%;
         height: 100%;
         border-radius: inherit;
-        background: linear-gradient(90deg, #155eef, #0b8fb2);
+        background: linear-gradient(90deg, #075e46, #f0642e, #f4a300);
         animation: boot-slide 1.35s ease-in-out infinite alternate;
       }
 
@@ -95,7 +113,7 @@
       <div class="boot-shell">
         <div class="boot-panel">
           <p class="boot-kicker">InsightAI BI</p>
-          <h1 class="boot-title">Loading analytics workspace</h1>
+          <h1 class="boot-title">Finding the signal</h1>
           <p class="boot-copy">Preparing datasets, dashboards, and the current session context.</p>
           <div class="boot-bar" aria-hidden="true"></div>
         </div>

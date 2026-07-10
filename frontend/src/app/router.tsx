@@ -4,6 +4,8 @@ import { lazy, Suspense } from "react";
 import { BrowserRouter, Navigate, Route, Routes, useLocation, useParams } from "react-router-dom";
 
 import { AuthGuard, GuestGuard } from "@next/core/auth/guards";
+import { GeoPattern } from "@next/components/brand/geo-pattern";
+import { InsightBrand } from "@next/components/brand/insight-brand";
 import { NextAppShell } from "@next/layouts/app-shell";
 import { NextPublicLayout } from "@next/layouts/public-layout";
 import { tokens } from "@next/theme/tokens";
@@ -54,25 +56,26 @@ function RouterFallback() {
         <Stack
           spacing={1.2}
           sx={{
+            position: "relative",
+            overflow: "hidden",
             width: "min(720px, 100%)",
             px: { xs: 2.4, md: 3 },
             py: { xs: 2.5, md: 3 },
-            borderRadius: 2,
+            borderRadius: tokens.radius.lg,
             border: `1px solid ${alpha(tokens.color.border.strong, 0.3)}`,
             backgroundColor: tokens.color.bg.surface,
             boxShadow: tokens.shadow.sm,
           }}
         >
-          <Typography variant="overline" color="text.secondary">
-            InsightAI BI
+          <GeoPattern density="quiet" sx={{ display: { xs: "none", sm: "block" }, left: "auto", width: 260, opacity: 0.14 }} />
+          <InsightBrand sx={{ position: "relative", zIndex: 1 }} />
+          <Typography variant="h3" sx={{ position: "relative", zIndex: 1, maxWidth: 640 }}>
+            Finding the signal
           </Typography>
-          <Typography variant="h3" sx={{ maxWidth: 640 }}>
-            Loading analytics workspace
-          </Typography>
-          <Typography color="text.secondary" sx={{ maxWidth: 620 }}>
+          <Typography color="text.secondary" sx={{ position: "relative", zIndex: 1, maxWidth: 620 }}>
             Preparing the current route, restoring session context, and resolving the next surface.
           </Typography>
-          <Stack direction="row" spacing={1.25} alignItems="center" sx={{ pt: 0.35 }}>
+          <Stack direction="row" spacing={1.25} alignItems="center" sx={{ position: "relative", zIndex: 1, pt: 0.35 }}>
             <CircularProgress size={20} />
             <Typography color="text.secondary">Loading page...</Typography>
           </Stack>
@@ -93,7 +96,7 @@ function RouterFallback() {
       <Box
         sx={{
           display: { xs: "none", lg: "block" },
-          background: `linear-gradient(180deg, ${tokens.color.bg.inverse} 0%, #122236 100%)`,
+            background: `linear-gradient(180deg, ${tokens.color.bg.inverse} 0%, #064232 100%)`,
           borderRight: `1px solid ${tokens.color.border.subtle}`,
         }}
       />
@@ -113,7 +116,7 @@ function RouterFallback() {
           <Stack spacing={0.15}>
             <Typography variant="subtitle1">InsightAI BI</Typography>
             <Typography variant="body2" sx={{ color: alpha(tokens.color.fg.inverse, 0.66) }}>
-              Editorial analytics workspace
+              Data, interpreted.
             </Typography>
           </Stack>
           <CircularProgress size={20} sx={{ color: tokens.color.fg.inverse }} />

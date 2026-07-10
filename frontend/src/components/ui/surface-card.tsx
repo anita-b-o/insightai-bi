@@ -31,8 +31,8 @@ export function SurfaceCard({
   const toneStyles = {
     panel: {
       backgroundColor: tokens.color.bg.surface,
-      border: `1px solid ${alpha(tokens.color.border.strong, 0.26)}`,
-      borderTop: `1px solid ${alpha(tokens.color.border.strong, 0.42)}`,
+      border: `1px solid ${alpha(tokens.color.border.strong, 0.42)}`,
+      borderTop: `2px solid ${alpha(tokens.color.accent.deepGreen, 0.42)}`,
       borderRadius: tokens.radius.md,
     },
     well: {
@@ -46,7 +46,7 @@ export function SurfaceCard({
       borderRadius: 0,
     },
     hero: {
-      backgroundColor: tokens.color.bg.surface,
+      backgroundColor: alpha(tokens.color.bg.surface, 0.82),
       borderTop: `1px solid ${tokens.color.border.subtle}`,
       borderBottom: `1px solid ${alpha(tokens.color.border.strong, 0.34)}`,
       borderLeft: "none",
@@ -259,7 +259,7 @@ export function InlineStatRow({
         gap: "1px",
         borderTop: topBorder ? `1px solid ${alpha(tokens.color.border.strong, 0.22)}` : "none",
         borderBottom: bottomBorder ? `1px solid ${alpha(tokens.color.border.strong, 0.22)}` : "none",
-        backgroundColor: alpha(tokens.color.border.strong, 0.16),
+        backgroundColor: alpha(tokens.color.border.strong, 0.2),
       }}
     >
       {children}
@@ -275,7 +275,7 @@ export function InlineStatItem({ label, value, detail }: { label: string; value:
         py: { xs: 1.15, md: 1.35 },
         px: { xs: 0.15, sm: 1.2, lg: 1.45 },
         minWidth: 0,
-        backgroundColor: tokens.color.bg.canvas,
+        backgroundColor: tokens.color.bg.surface,
       }}
     >
       <Typography variant="caption" color="text.secondary" sx={{ letterSpacing: "0.06em", textTransform: "uppercase" }}>
@@ -310,7 +310,7 @@ export function MetricStrip({
         },
         alignItems: "stretch",
         gap: "1px",
-        backgroundColor: alpha(tokens.color.border.strong, 0.14),
+        backgroundColor: alpha(tokens.color.border.strong, 0.18),
         borderTop: `1px solid ${alpha(tokens.color.border.strong, 0.2)}`,
         borderBottom: `1px solid ${alpha(tokens.color.border.strong, 0.2)}`,
       }}
@@ -328,7 +328,7 @@ export function MetricStripItem({ label, value, detail }: { label: string; value
         py: { xs: 1.25, md: 1.45 },
         px: { xs: 0.2, sm: 1.15, lg: 1.45 },
         minWidth: 0,
-        backgroundColor: tokens.color.bg.canvas,
+        backgroundColor: tokens.color.bg.surface,
         justifyContent: "center",
       }}
     >
