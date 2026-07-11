@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     postgres_user: str = "insightai"
     postgres_password: str = "insightai"
     postgres_db: str = "insightai_bi"
+    database_url: str | None = None
 
     backend_cors_origins: list[str] = [
         "http://localhost:5173",
@@ -41,6 +42,8 @@ class Settings(BaseSettings):
 
     @property
     def sqlalchemy_database_uri(self) -> str:
+        if self.database_url:
+            return self._normalize_database_url(self.database_url)
         return (
             f"postgresql+psycopg2://{self.postgres_user}:{self.postgres_password}"
             f"@{self.postgres_server}:{self.postgres_port}/{self.postgres_db}"
@@ -49,6 +52,15 @@ class Settings(BaseSettings):
     @property
     def storage_dir(self) -> Path:
         return Path(self.storage_path)
+
+    @staticmethod
+    def _normalize_database_url(database_url: str) -> str:
+        url = database_url.strip()
+        if url.startswith("postgres://"):
+            return f"postgresql+psycopg2://{url.removeprefix('postgres://')}"
+        if url.startswith("postgresql://"):
+            return f"postgresql+psycopg2://{url.removeprefix('postgresql://')}"
+        return url
 
     @field_validator("backend_cors_origins", mode="before")
     @classmethod

@@ -1,0 +1,55 @@
+services:
+  - type: web
+    name: insightai-bi-backend
+    runtime: docker
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: starter
+    healthCheckPath: /health
+    preDeployCommand: alembic upgrade head
+    dockerCommand: uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}
+    disk:
+      name: dataset-storage
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: API_V1_PREFIX
+        value: /api
+      - key: DATABASE_URL
+        fromDatabase:
+          name: insightai-bi-postgres
+          property: connectionString
+      - key: STORAGE_PATH
+        value: /var/data/datasets
+      - key: BACKEND_CORS_ORIGINS
+        sync: false
+      - key: SECRET_KEY
+        generateValue: true
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENAI_MODEL
+        value: gpt-4.1-mini
+      - key: OPENAI_TIMEOUT_SECONDS
+        value: "45"
+      - key: OPENAI_MAX_RETRIES
+        value: "1"
+      - key: DASHBOARD_REFRESH_LOCK_TIMEOUT_SECONDS
+        value: "300"
+      - key: WORKER_HEARTBEAT_TIMEOUT_SECONDS
+        value: "180"
+      - key: SENTRY_DSN
+        sync: false
+      - key: SENTRY_ENVIRONMENT
+        value: production
+      - key: SENTRY_TRACES_SAMPLE_RATE
+        value: "0"
+
+databases:
+  - name: insightai-bi-postgres
+    databaseName: insightai_bi
+    user: insightai_bi
+    plan: free
+    diskSizeGB: 1

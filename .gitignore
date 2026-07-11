@@ -1,5 +1,7 @@
 backend/.env
 frontend/.env
+*.env.local
+.vercel/
 deploy/compose.prod.env
 deploy/backend.prod.env
 backups/
@@ -7,3 +9,5 @@ backups/
 # Build artifacts
 frontend/dist/
 frontend/node_modules/
+node_modules/
+backend/storage/

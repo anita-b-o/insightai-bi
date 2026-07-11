@@ -20,7 +20,7 @@ def test_run_cycle_processes_due_dashboards(monkeypatch):
     monkeypatch.setattr(
         dashboard_refresh_worker,
         "refresh_dashboard",
-        lambda db, current_user, dashboard_id: refreshed.append(dashboard_id),
+        lambda db, current_user, dashboard_id, lock_acquired=False: refreshed.append(dashboard_id),
     )
 
     result = dashboard_refresh_worker.run_dashboard_refresh_cycle(db)
@@ -66,7 +66,7 @@ def test_run_cycle_continues_after_dashboard_failure(monkeypatch):
     monkeypatch.setattr(dashboard_refresh_worker, "_recover_expired_locks", lambda db: 0)
     monkeypatch.setattr(dashboard_refresh_worker, "_clear_refresh_in_progress", lambda db, dashboard_id, error_message=None: None)
 
-    def refresh(db, current_user, dashboard_id):
+    def refresh(db, current_user, dashboard_id, lock_acquired=False):
         if dashboard_id == 1:
             raise RuntimeError("boom")
         refreshed.append(dashboard_id)
@@ -103,7 +103,7 @@ def test_run_cycle_respects_refresh_in_progress_lock(monkeypatch):
     monkeypatch.setattr(
         dashboard_refresh_worker,
         "refresh_dashboard",
-        lambda db, current_user, dashboard_id: refreshed.append(dashboard_id),
+        lambda db, current_user, dashboard_id, lock_acquired=False: refreshed.append(dashboard_id),
     )
 
     result = dashboard_refresh_worker.run_dashboard_refresh_cycle(db)
