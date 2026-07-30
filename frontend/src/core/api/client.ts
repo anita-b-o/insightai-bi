@@ -1,7 +1,7 @@
 import axios, { isAxiosError } from "axios";
 
 import { reportClientError } from "@next/app/client-error-reporting";
-import { getStoredToken } from "../auth/storage";
+import { getStoredToken, invalidateStoredToken } from "../auth/storage";
 
 const REQUEST_ID_HEADER = "X-Request-ID";
 
@@ -41,9 +41,17 @@ nextApiClient.interceptors.response.use(
   (response) => response,
   (error: unknown) => {
     if (isAxiosError(error) && error.response?.status === 401) {
-      const currentToken = getStoredToken();
-      if (currentToken) {
-        localStorage.removeItem("insightai.bi.token");
+      const requestUrl = error.config?.url ?? "";
+      const isPublicAuthRequest =
+        requestUrl.endsWith("/auth/login") || requestUrl.endsWith("/auth/register");
+      const authorization = error.config?.headers?.get("Authorization");
+      const requestToken =
+        typeof authorization === "string" && authorization.startsWith("Bearer ")
+          ? authorization.slice("Bearer ".length)
+          : undefined;
+
+      if (!isPublicAuthRequest && requestToken) {
+        invalidateStoredToken(requestToken);
       }
     }
     if (isAxiosError(error) && error.response?.status && error.response.status >= 500) {

@@ -24,6 +24,7 @@ Este repo queda preparado para desplegar `frontend/` en Vercel y `backend/` en R
 - Output Directory: `dist`
 - Variables:
   - `VITE_API_BASE_URL=https://BACKEND.onrender.com/api`
+  - `VITE_AUTH_RESTORE_TIMEOUT_MS=12000` limita la validación inicial de `/users/me`; no configura reintentos automáticos.
   - `VITE_CLIENT_ERROR_ENDPOINT=` si no se usa reporte externo.
   - `VITE_SENTRY_DSN=`, `VITE_SENTRY_ENVIRONMENT=production`, `VITE_SENTRY_TRACES_SAMPLE_RATE=0` si aplica.
 

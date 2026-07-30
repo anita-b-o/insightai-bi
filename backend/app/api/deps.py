@@ -36,14 +36,27 @@ def get_current_user(
         log_event(logger, logging.WARNING, "auth_token_invalid", request_id=request_id, error_code="decode_failed")
         raise credentials_exception from exc
 
-    user = db.query(User).filter(User.id == int(subject)).first()
-    if user is None:
+    try:
+        user_id = int(subject)
+    except (TypeError, ValueError) as exc:
         log_event(
             logger,
             logging.WARNING,
             "auth_token_invalid",
             request_id=request_id,
-            error_code="user_not_found",
+            error_code="invalid_subject",
+            subject=subject,
+        )
+        raise credentials_exception from exc
+
+    user = db.query(User).filter(User.id == user_id).first()
+    if user is None or not user.is_active:
+        log_event(
+            logger,
+            logging.WARNING,
+            "auth_token_invalid",
+            request_id=request_id,
+            error_code="user_not_found" if user is None else "user_inactive",
             subject=subject,
         )
         raise credentials_exception

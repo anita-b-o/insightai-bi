@@ -91,7 +91,7 @@ def login(payload: LoginRequest, request: Request, db: Session = Depends(get_db)
         email=payload.email,
     )
     user = db.query(User).filter(User.email == payload.email).first()
-    if user is None or not verify_password(payload.password, user.hashed_password):
+    if user is None or not user.is_active or not verify_password(payload.password, user.hashed_password):
         log_event(
             logger,
             logging.WARNING,
