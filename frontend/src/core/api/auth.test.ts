@@ -71,6 +71,6 @@ describe("auth api", () => {
 
     await getCurrentUser();
 
-    expect(nextApiClient.get).toHaveBeenCalledWith("/users/me");
+    expect(nextApiClient.get).toHaveBeenCalledWith("/users/me", undefined);
   });
 });

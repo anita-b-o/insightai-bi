@@ -1,6 +1,12 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { clearStoredToken, getStoredToken, setStoredToken } from "@next/core/auth/storage";
+import {
+  AUTH_SESSION_INVALIDATED_EVENT,
+  clearStoredToken,
+  getStoredToken,
+  invalidateStoredToken,
+  setStoredToken,
+} from "@next/core/auth/storage";
 
 describe("auth storage", () => {
   beforeEach(() => {
@@ -19,5 +25,20 @@ describe("auth storage", () => {
     clearStoredToken();
 
     expect(getStoredToken()).toBeNull();
+  });
+
+  it("invalidates only the token used by the rejected request", () => {
+    const invalidated = vi.fn();
+    globalThis.addEventListener(AUTH_SESSION_INVALIDATED_EVENT, invalidated);
+    setStoredToken("new-token");
+
+    expect(invalidateStoredToken("old-token")).toBe(false);
+    expect(getStoredToken()).toBe("new-token");
+    expect(invalidated).not.toHaveBeenCalled();
+
+    expect(invalidateStoredToken("new-token")).toBe(true);
+    expect(getStoredToken()).toBeNull();
+    expect(invalidated).toHaveBeenCalledTimes(1);
+    globalThis.removeEventListener(AUTH_SESSION_INVALIDATED_EVENT, invalidated);
   });
 });

@@ -1,4 +1,5 @@
 import type { AuthResponse, LoginPayload, RegisterPayload, SessionUser } from "@next/core/types/auth";
+import type { AxiosRequestConfig } from "axios";
 
 import { nextApiClient } from "./client";
 
@@ -12,7 +13,7 @@ export async function login(payload: LoginPayload): Promise<AuthResponse> {
   return data;
 }
 
-export async function getCurrentUser(): Promise<SessionUser> {
-  const { data } = await nextApiClient.get<SessionUser>("/users/me");
+export async function getCurrentUser(config?: Pick<AxiosRequestConfig, "signal" | "timeout">): Promise<SessionUser> {
+  const { data } = await nextApiClient.get<SessionUser>("/users/me", config);
   return data;
 }
