@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     postgres_password: str = "insightai"
     postgres_db: str = "insightai_bi"
     database_url: str | None = None
+    database_direct_url: str | None = None
 
     backend_cors_origins: list[str] = [
         "http://localhost:5173",
@@ -48,6 +49,12 @@ class Settings(BaseSettings):
             f"postgresql+psycopg2://{self.postgres_user}:{self.postgres_password}"
             f"@{self.postgres_server}:{self.postgres_port}/{self.postgres_db}"
         )
+
+    @property
+    def sqlalchemy_migration_uri(self) -> str:
+        if self.database_direct_url:
+            return self._normalize_database_url(self.database_direct_url)
+        return self.sqlalchemy_database_uri
 
     @property
     def storage_dir(self) -> Path:

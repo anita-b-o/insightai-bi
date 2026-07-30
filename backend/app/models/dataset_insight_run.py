@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import DateTime, ForeignKey, String, Text, func
+from sqlalchemy import DateTime, ForeignKey, Index, String, Text, func
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -27,3 +27,15 @@ class DatasetInsightRun(Base):
 
     dataset: Mapped["Dataset"] = relationship(back_populates="insight_runs")
     user: Mapped["User"] = relationship(back_populates="insight_runs")
+
+
+Index(
+    "ix_dataset_insight_runs_dataset_generated_at_desc",
+    DatasetInsightRun.dataset_id,
+    DatasetInsightRun.generated_at.desc(),
+)
+Index(
+    "ix_dataset_insight_runs_user_generated_at_desc",
+    DatasetInsightRun.user_id,
+    DatasetInsightRun.generated_at.desc(),
+)

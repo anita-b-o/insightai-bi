@@ -164,6 +164,8 @@ Important backend variables:
 
 - `APP_ENV`
 - `SECRET_KEY`
+- `DATABASE_URL`
+- `DATABASE_DIRECT_URL`
 - `POSTGRES_SERVER`
 - `POSTGRES_PORT`
 - `POSTGRES_USER`
@@ -185,6 +187,8 @@ Important frontend variable:
 Notes:
 
 - `OPENAI_API_KEY` is optional for development
+- for managed PostgreSQL, use a pooled `DATABASE_URL` for the application and a
+  direct `DATABASE_DIRECT_URL` for Alembic
 - real secrets should never be committed
 - public share links store only hashed token values in the database
 - `APP_ENV=production` rejects placeholder secrets at startup

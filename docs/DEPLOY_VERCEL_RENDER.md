@@ -1,10 +1,12 @@
-# Deploy en Vercel + Render
+# Deploy en Vercel + Render con Neon PostgreSQL
 
-Este repo queda preparado para desplegar `frontend/` en Vercel y `backend/` en Render, con PostgreSQL administrado en Render. No despliegues frontend y backend juntos en Vercel.
+Este repo queda preparado para desplegar `frontend/` en Vercel y `backend/` en
+Render, con PostgreSQL administrado en Neon. No despliegues frontend y backend
+juntos en Vercel.
 
 ## Orden recomendado
 
-1. Crear PostgreSQL en Render.
+1. Crear el proyecto PostgreSQL en Neon.
 2. Crear el backend en Render.
 3. Configurar variables del backend.
 4. Ejecutar migraciones.
@@ -30,12 +32,17 @@ Este repo queda preparado para desplegar `frontend/` en Vercel y `backend/` en R
 
 `frontend/vercel.json` solo contiene el rewrite SPA hacia `index.html`, suficiente para rutas directas como `/demo`, `/login`, `/register`, `/datasets`, `/upload`, `/dashboards`, `/dashboards/:id` y `/share/:token`.
 
-## Render Postgres
+## Neon PostgreSQL
 
-- Crear una base PostgreSQL en Render o usar el `render.yaml`.
-- Mantener la base y el backend en la misma region.
-- Conectar `DATABASE_URL` al Web Service con la Internal Database URL o con `fromDatabase.connectionString`.
+- Crear el proyecto Neon con la misma version mayor de PostgreSQL usada en
+  produccion.
+- Elegir la region de Neon mas cercana a la region del backend de Render.
+- Usar la URL pooled de Neon como `DATABASE_URL`.
+- Usar la URL directa de Neon como `DATABASE_DIRECT_URL`.
+- Conservar `sslmode=require&channel_binding=require` en ambas URLs.
 - `DATABASE_URL` tiene prioridad sobre `POSTGRES_SERVER`, `POSTGRES_PORT`, `POSTGRES_USER`, `POSTGRES_PASSWORD` y `POSTGRES_DB`.
+- Alembic tiene prioridad por `DATABASE_DIRECT_URL` y solo usa
+  `DATABASE_URL` como fallback.
 
 ## Render Backend
 
@@ -55,7 +62,8 @@ Variables necesarias:
 ```sh
 APP_ENV=production
 API_V1_PREFIX=/api
-DATABASE_URL=<Render Internal Database URL>
+DATABASE_URL=<Neon pooled URL>
+DATABASE_DIRECT_URL=<Neon direct URL>
 STORAGE_PATH=/var/data/datasets
 BACKEND_CORS_ORIGINS=["https://mi-proyecto.vercel.app"]
 SECRET_KEY=<generado por Render o valor seguro>
@@ -124,7 +132,14 @@ Comando para un Background Worker separado en Render:
 while true; do python -m app.workers.dashboard_refresh_worker; sleep 60; done
 ```
 
-Debe usar las mismas variables que el backend, incluyendo `DATABASE_URL` y `STORAGE_PATH`.
+Debe usar las mismas variables que el backend, incluyendo `DATABASE_URL`,
+`DATABASE_DIRECT_URL` y `STORAGE_PATH`.
+
+## Base Render anterior
+
+Durante una migracion, conservar PostgreSQL de Render sin trafico durante la
+ventana de rollback. No eliminarlo ni quitarlo del Blueprint hasta validar
+integridad, login, datasets, dashboards, uploads, IA y worker sobre Neon.
 
 ## Smoke test
 
