@@ -81,7 +81,12 @@ Current scope:
 
 - polls dashboards due for refresh
 - applies dashboard refresh safely
-- avoids double execution with `refresh_in_progress`
+- uses PostgreSQL lock ownership tokens to avoid double execution
+- is triggered in the free deployment by GitHub Actions every ten minutes;
+  PostgreSQL `next_refresh_at` remains the source of truth
+
+See [SCHEDULED_REFRESH.md](./SCHEDULED_REFRESH.md) for the authenticated,
+best-effort scheduler contract and its Render Free limitations.
 
 ## Frontend Layers
 

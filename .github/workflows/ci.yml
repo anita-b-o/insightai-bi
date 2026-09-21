@@ -60,9 +60,11 @@ jobs:
             backend/requirements.txt
             backend/requirements-dev.txt
       - run: pip install -r requirements.txt
+      - run: pip install -r requirements-dev.txt
       - run: python -m compileall app
       - run: python -c "import app.main; import app.workers.dashboard_refresh_worker; print('backend import smoke ok')"
       - run: alembic upgrade head
+      - run: pytest -q
 
   docker:
     runs-on: ubuntu-latest

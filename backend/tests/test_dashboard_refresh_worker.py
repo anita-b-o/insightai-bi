@@ -14,13 +14,13 @@ def test_run_cycle_processes_due_dashboards(monkeypatch):
     refreshed: list[int] = []
 
     monkeypatch.setattr(dashboard_refresh_worker, "find_dashboards_due_for_refresh", lambda db: dashboards)
-    monkeypatch.setattr(dashboard_refresh_worker, "_try_mark_refresh_in_progress", lambda db, dashboard_id: True)
+    monkeypatch.setattr(dashboard_refresh_worker, "_try_mark_refresh_in_progress", lambda db, dashboard_id: "lock-token")
     monkeypatch.setattr(dashboard_refresh_worker, "_recover_expired_locks", lambda db: 0)
-    monkeypatch.setattr(dashboard_refresh_worker, "_clear_refresh_in_progress", lambda db, dashboard_id, error_message=None: None)
+    monkeypatch.setattr(dashboard_refresh_worker, "_clear_refresh_in_progress", lambda db, dashboard_id, lock_token, error_message=None: None)
     monkeypatch.setattr(
         dashboard_refresh_worker,
         "refresh_dashboard",
-        lambda db, current_user, dashboard_id, lock_acquired=False: refreshed.append(dashboard_id),
+        lambda db, current_user, dashboard_id, lock_token=None, release_lock=True: refreshed.append(dashboard_id),
     )
 
     result = dashboard_refresh_worker.run_dashboard_refresh_cycle(db)
@@ -40,9 +40,9 @@ def test_run_cycle_ignores_when_no_dashboards_are_due(monkeypatch):
     db = MagicMock()
 
     monkeypatch.setattr(dashboard_refresh_worker, "find_dashboards_due_for_refresh", lambda db: [])
-    monkeypatch.setattr(dashboard_refresh_worker, "_try_mark_refresh_in_progress", lambda db, dashboard_id: True)
+    monkeypatch.setattr(dashboard_refresh_worker, "_try_mark_refresh_in_progress", lambda db, dashboard_id: "lock-token")
     monkeypatch.setattr(dashboard_refresh_worker, "_recover_expired_locks", lambda db: 0)
-    monkeypatch.setattr(dashboard_refresh_worker, "_clear_refresh_in_progress", lambda db, dashboard_id, error_message=None: None)
+    monkeypatch.setattr(dashboard_refresh_worker, "_clear_refresh_in_progress", lambda db, dashboard_id, lock_token, error_message=None: None)
 
     result = dashboard_refresh_worker.run_dashboard_refresh_cycle(db)
 
@@ -62,11 +62,11 @@ def test_run_cycle_continues_after_dashboard_failure(monkeypatch):
     refreshed: list[int] = []
 
     monkeypatch.setattr(dashboard_refresh_worker, "find_dashboards_due_for_refresh", lambda db: dashboards)
-    monkeypatch.setattr(dashboard_refresh_worker, "_try_mark_refresh_in_progress", lambda db, dashboard_id: True)
+    monkeypatch.setattr(dashboard_refresh_worker, "_try_mark_refresh_in_progress", lambda db, dashboard_id: "lock-token")
     monkeypatch.setattr(dashboard_refresh_worker, "_recover_expired_locks", lambda db: 0)
-    monkeypatch.setattr(dashboard_refresh_worker, "_clear_refresh_in_progress", lambda db, dashboard_id, error_message=None: None)
+    monkeypatch.setattr(dashboard_refresh_worker, "_clear_refresh_in_progress", lambda db, dashboard_id, lock_token, error_message=None: None)
 
-    def refresh(db, current_user, dashboard_id, lock_acquired=False):
+    def refresh(db, current_user, dashboard_id, lock_token=None, release_lock=True):
         if dashboard_id == 1:
             raise RuntimeError("boom")
         refreshed.append(dashboard_id)
@@ -96,14 +96,14 @@ def test_run_cycle_respects_refresh_in_progress_lock(monkeypatch):
     monkeypatch.setattr(
         dashboard_refresh_worker,
         "_try_mark_refresh_in_progress",
-        lambda db, dashboard_id: dashboard_id != 1,
+        lambda db, dashboard_id: "lock-token" if dashboard_id != 1 else None,
     )
     monkeypatch.setattr(dashboard_refresh_worker, "_recover_expired_locks", lambda db: 0)
-    monkeypatch.setattr(dashboard_refresh_worker, "_clear_refresh_in_progress", lambda db, dashboard_id, error_message=None: None)
+    monkeypatch.setattr(dashboard_refresh_worker, "_clear_refresh_in_progress", lambda db, dashboard_id, lock_token, error_message=None: None)
     monkeypatch.setattr(
         dashboard_refresh_worker,
         "refresh_dashboard",
-        lambda db, current_user, dashboard_id, lock_acquired=False: refreshed.append(dashboard_id),
+        lambda db, current_user, dashboard_id, lock_token=None, release_lock=True: refreshed.append(dashboard_id),
     )
 
     result = dashboard_refresh_worker.run_dashboard_refresh_cycle(db)

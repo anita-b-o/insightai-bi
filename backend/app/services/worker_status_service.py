@@ -74,7 +74,9 @@ def get_worker_health_snapshot(
             "status": "degraded",
             "worker_name": worker_name,
             "reason": "No worker heartbeat recorded yet",
-            "heartbeat_timeout_seconds": settings.worker_heartbeat_timeout_seconds,
+            "heartbeat_timeout_seconds": settings.scheduler_heartbeat_timeout_seconds,
+            "scheduler_expected_interval_seconds": settings.scheduler_expected_interval_seconds,
+            "scheduler_heartbeat_grace_seconds": settings.scheduler_heartbeat_grace_seconds,
             "last_worker_heartbeat_at": None,
             "last_worker_cycle_at": None,
             "last_worker_error": None,
@@ -86,7 +88,7 @@ def get_worker_health_snapshot(
     heartbeat_at = _normalize_datetime(status.last_worker_heartbeat_at)
     cycle_at = _normalize_datetime(status.last_worker_cycle_at)
     heartbeat_age_seconds = int((_utc_now() - heartbeat_at).total_seconds())
-    is_stale = heartbeat_age_seconds > settings.worker_heartbeat_timeout_seconds
+    is_stale = heartbeat_age_seconds > settings.scheduler_heartbeat_timeout_seconds
     has_error = bool(status.last_worker_error)
     worker_status = "degraded" if is_stale or has_error else "healthy"
 
@@ -94,7 +96,9 @@ def get_worker_health_snapshot(
         "status": worker_status,
         "worker_name": worker_name,
         "reason": "stale_heartbeat" if is_stale else ("last_cycle_error" if has_error else "ok"),
-        "heartbeat_timeout_seconds": settings.worker_heartbeat_timeout_seconds,
+        "heartbeat_timeout_seconds": settings.scheduler_heartbeat_timeout_seconds,
+        "scheduler_expected_interval_seconds": settings.scheduler_expected_interval_seconds,
+        "scheduler_heartbeat_grace_seconds": settings.scheduler_heartbeat_grace_seconds,
         "last_worker_heartbeat_at": _to_iso(heartbeat_at),
         "last_worker_cycle_at": _to_iso(cycle_at),
         "last_worker_error": status.last_worker_error,

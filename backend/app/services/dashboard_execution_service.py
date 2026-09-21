@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import secrets
 from datetime import datetime, timedelta, timezone
 
 from fastapi import HTTPException, status
@@ -36,8 +37,9 @@ def _refresh_lock_expires_at(now: datetime | None = None) -> datetime:
     return current + timedelta(seconds=settings.dashboard_refresh_lock_timeout_seconds)
 
 
-def try_acquire_dashboard_refresh_lock(db: Session, *, dashboard_id: int) -> bool:
+def try_acquire_dashboard_refresh_lock(db: Session, *, dashboard_id: int) -> str | None:
     now = _utc_now()
+    lock_token = secrets.token_urlsafe(32)
     result = db.execute(
         update(Dashboard)
         .where(
@@ -53,30 +55,56 @@ def try_acquire_dashboard_refresh_lock(db: Session, *, dashboard_id: int) -> boo
             refresh_started_at=now,
             refresh_finished_at=None,
             refresh_lock_expires_at=_refresh_lock_expires_at(now),
+            refresh_lock_token=lock_token,
             last_refresh_attempt_at=now,
         )
     )
     db.commit()
-    return bool(result.rowcount)
+    return lock_token if result.rowcount else None
 
 
 def release_dashboard_refresh_lock(
     db: Session,
     *,
     dashboard_id: int,
+    lock_token: str,
     error_message: str | None = None,
-) -> None:
-    db.execute(
+) -> bool:
+    result = db.execute(
         update(Dashboard)
-        .where(Dashboard.id == dashboard_id)
+        .where(Dashboard.id == dashboard_id, Dashboard.refresh_lock_token == lock_token)
         .values(
             refresh_in_progress=False,
             refresh_finished_at=_utc_now(),
             refresh_lock_expires_at=None,
+            refresh_lock_token=None,
             last_refresh_error=error_message[:500] if error_message else None,
         )
     )
     db.commit()
+    return bool(result.rowcount)
+
+
+def renew_dashboard_refresh_lock(db: Session, *, dashboard_id: int, lock_token: str) -> bool:
+    """Extend only a currently-owned, unexpired lock.
+
+    A refresh with several widgets should not lose its lock just because its
+    aggregate duration is longer than the lock timeout. Conversely, an owner
+    that already lost an expired lock must never revive it.
+    """
+    now = _utc_now()
+    result = db.execute(
+        update(Dashboard)
+        .where(
+            Dashboard.id == dashboard_id,
+            Dashboard.refresh_in_progress.is_(True),
+            Dashboard.refresh_lock_token == lock_token,
+            Dashboard.refresh_lock_expires_at > now,
+        )
+        .values(refresh_lock_expires_at=_refresh_lock_expires_at(now))
+    )
+    db.commit()
+    return bool(result.rowcount)
 
 
 def reconcile_expired_refresh_lock(db: Session, *, dashboard_id: int) -> None:
@@ -93,6 +121,7 @@ def reconcile_expired_refresh_lock(db: Session, *, dashboard_id: int) -> None:
             refresh_in_progress=False,
             refresh_finished_at=now,
             refresh_lock_expires_at=None,
+            refresh_lock_token=None,
             last_refresh_error="Refresh lock expired before completion",
         )
     )
@@ -353,12 +382,15 @@ def refresh_dashboard(
     *,
     current_user: User,
     dashboard_id: int,
-    lock_acquired: bool = False,
+    lock_token: str | None = None,
+    release_lock: bool = True,
 ) -> DashboardDetail:
     dashboard = _get_owned_dashboard(db, dashboard_id=dashboard_id, user_id=current_user.id)
     if dashboard is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Dashboard not found")
-    if not lock_acquired and not try_acquire_dashboard_refresh_lock(db, dashboard_id=dashboard.id):
+    if lock_token is None:
+        lock_token = try_acquire_dashboard_refresh_lock(db, dashboard_id=dashboard.id)
+    if lock_token is None:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="Dashboard refresh already in progress. Retry when the current refresh completes.",
@@ -371,6 +403,11 @@ def refresh_dashboard(
 
     try:
         for widget in dashboard.widgets:
+            if not renew_dashboard_refresh_lock(db, dashboard_id=dashboard.id, lock_token=lock_token):
+                raise HTTPException(
+                    status_code=status.HTTP_409_CONFLICT,
+                    detail="Dashboard refresh lock was lost before completion.",
+                )
             execute_widget(db, widget=widget, dashboard=dashboard, current_user=current_user)
             if getattr(widget, "execution_status", None) == "success":
                 success_count += 1
@@ -419,7 +456,7 @@ def refresh_dashboard(
         raise
     finally:
         try:
-            if not lock_acquired:
-                release_dashboard_refresh_lock(db, dashboard_id=dashboard.id, error_message=refresh_error)
+            if release_lock:
+                release_dashboard_refresh_lock(db, dashboard_id=dashboard.id, lock_token=lock_token, error_message=refresh_error)
         except Exception:
             db.rollback()

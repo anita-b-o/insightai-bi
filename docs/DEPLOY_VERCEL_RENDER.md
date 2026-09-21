@@ -122,18 +122,16 @@ Montar un Persistent Disk en:
 
 El `render.yaml` declara un disco de 1 GB en `/var/data`. Los discos persistentes requieren instancia paga. Si se usa un plan gratuito sin disco, el filesystem de Render es efimero y los CSV pueden perderse en reinicios o redeploys.
 
-## Worker de dashboards
+## Refresh programado de dashboards en Render Free
 
-El worker no debe ejecutarse dentro del proceso `uvicorn`. Es opcional para refrescos programados de dashboards; las funciones basicas de API y demo no requieren correrlo junto al web service.
+Render Free no ofrece Background Workers ni Cron Jobs gratuitos. El refresh
+programado se dispara desde GitHub Actions cada diez minutos hacia el endpoint
+interno autenticado del backend. Consultar
+[SCHEDULED_REFRESH.md](./SCHEDULED_REFRESH.md) antes de desplegar: requiere
+configurar el mismo `SCHEDULER_SECRET` en Render y como GitHub Actions Secret.
 
-Comando para un Background Worker separado en Render:
-
-```sh
-while true; do python -m app.workers.dashboard_refresh_worker; sleep 60; done
-```
-
-Debe usar las mismas variables que el backend, incluyendo `DATABASE_URL`,
-`DATABASE_DIRECT_URL` y `STORAGE_PATH`.
+No ejecutar un loop de worker dentro de `uvicorn`: Render puede suspender un
+Web Service Free inactivo y perdería el scheduler embebido.
 
 ## Base Render anterior
 

@@ -24,6 +24,7 @@ class Dashboard(Base):
     refresh_started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     refresh_finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     refresh_lock_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    refresh_lock_token: Mapped[str | None] = mapped_column(String(128), nullable=True)
     last_refresh_attempt_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     last_refresh_error: Mapped[str | None] = mapped_column(String(500), nullable=True)
     refresh_interval_minutes: Mapped[int | None] = mapped_column(Integer, nullable=True)

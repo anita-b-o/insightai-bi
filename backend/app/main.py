@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
 from fastapi.exception_handlers import request_validation_exception_handler
 
-from app.api.routes import ai, auth, dashboards, datasets, public, users
+from app.api.routes import ai, auth, dashboards, datasets, internal, public, users
 from app.core.config import settings
 from app.core.observability import log_event
 from app.core.sentry import init_sentry
@@ -38,6 +38,7 @@ app.include_router(datasets.router, prefix=settings.api_v1_prefix)
 app.include_router(ai.router, prefix=settings.api_v1_prefix)
 app.include_router(dashboards.router, prefix=settings.api_v1_prefix)
 app.include_router(public.router, prefix=settings.api_v1_prefix)
+app.include_router(internal.router)
 
 
 @app.middleware("http")

@@ -1,0 +1,40 @@
+name: Scheduled dashboard refresh
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+# Do not interrupt a cycle that might already hold dashboard locks. GitHub
+# retains at most one queued run for this group; PostgreSQL remains the final
+# concurrency authority.
+concurrency:
+  group: scheduled-dashboard-refresh
+  cancel-in-progress: false
+
+jobs:
+  run-cycle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SCHEDULER_URL: https://insightai-bi-api.onrender.com/internal/scheduled-refresh/run
+      SCHEDULER_SECRET: ${{ secrets.SCHEDULER_SECRET }}
+    steps:
+      - name: Trigger trusted scheduled refresh cycle
+        shell: bash
+        run: |
+          set -euo pipefail
+          timestamp="$(date +%s)"
+          invocation_id="$(cat /proc/sys/kernel/random/uuid)"
+          signature="$(printf '%s' "${timestamp}.${invocation_id}" | openssl dgst -sha256 -hmac "${SCHEDULER_SECRET}" -hex | awk '{print $2}')"
+          curl --fail-with-body --silent --show-error \
+            --connect-timeout 120 \
+            --max-time 840 \
+            --request POST "${SCHEDULER_URL}" \
+            --header "X-Scheduler-Timestamp: ${timestamp}" \
+            --header "X-Scheduler-Invocation-Id: ${invocation_id}" \
+            --header "X-Scheduler-Signature: ${signature}" \
+            --header "Content-Type: application/json" \
+            --data '{}'

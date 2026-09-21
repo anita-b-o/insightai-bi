@@ -33,7 +33,10 @@ class Settings(BaseSettings):
     openai_max_retries: int = 1
     ai_sql_max_retries: int = 1
     dashboard_refresh_lock_timeout_seconds: int = 300
-    worker_heartbeat_timeout_seconds: int = 180
+    scheduler_secret: str | None = None
+    scheduler_request_max_age_seconds: int = 300
+    scheduler_expected_interval_seconds: int = 600
+    scheduler_heartbeat_grace_seconds: int = 300
     sentry_dsn: str | None = None
     sentry_environment: str | None = None
     sentry_release: str | None = None
@@ -59,6 +62,16 @@ class Settings(BaseSettings):
     @property
     def storage_dir(self) -> Path:
         return Path(self.storage_path)
+
+    @property
+    def scheduler_heartbeat_timeout_seconds(self) -> int:
+        """Maximum acceptable time since a real scheduled cycle began.
+
+        The scheduler interval and its grace period have distinct operational
+        meanings, so health must derive its threshold from both rather than
+        treating a scheduled job like a continuously running worker.
+        """
+        return self.scheduler_expected_interval_seconds + self.scheduler_heartbeat_grace_seconds
 
     @staticmethod
     def _normalize_database_url(database_url: str) -> str:

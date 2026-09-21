@@ -25,12 +25,16 @@ logger = logging.getLogger("app.workers.dashboard_refresh")
 init_sentry("dashboard_refresh_worker")
 
 
-def _try_mark_refresh_in_progress(db: Session, *, dashboard_id: int) -> bool:
+def _try_mark_refresh_in_progress(db: Session, *, dashboard_id: int) -> str | None:
     return try_acquire_dashboard_refresh_lock(db, dashboard_id=dashboard_id)
 
 
-def _clear_refresh_in_progress(db: Session, *, dashboard_id: int, error_message: str | None = None) -> None:
-    release_dashboard_refresh_lock(db, dashboard_id=dashboard_id, error_message=error_message)
+def _clear_refresh_in_progress(
+    db: Session, *, dashboard_id: int, lock_token: str, error_message: str | None = None
+) -> bool:
+    return release_dashboard_refresh_lock(
+        db, dashboard_id=dashboard_id, lock_token=lock_token, error_message=error_message
+    )
 
 
 def _recover_expired_locks(db: Session) -> int:
@@ -60,7 +64,8 @@ def run_dashboard_refresh_cycle(db: Session) -> dict[str, int]:
     skipped_locked = 0
 
     for dashboard in dashboards:
-        if not _try_mark_refresh_in_progress(db, dashboard_id=dashboard.id):
+        lock_token = _try_mark_refresh_in_progress(db, dashboard_id=dashboard.id)
+        if lock_token is None:
             skipped_locked += 1
             log_event(
                 logger,
@@ -78,7 +83,8 @@ def run_dashboard_refresh_cycle(db: Session) -> dict[str, int]:
                 db=db,
                 current_user=SimpleNamespace(id=dashboard.user_id),
                 dashboard_id=dashboard.id,
-                lock_acquired=True,
+                lock_token=lock_token,
+                release_lock=False,
             )
             succeeded += 1
         except Exception:
@@ -92,7 +98,9 @@ def run_dashboard_refresh_cycle(db: Session) -> dict[str, int]:
             db.rollback()
         finally:
             try:
-                _clear_refresh_in_progress(db, dashboard_id=dashboard.id, error_message=refresh_error)
+                _clear_refresh_in_progress(
+                    db, dashboard_id=dashboard.id, lock_token=lock_token, error_message=refresh_error
+                )
                 log_event(
                     logger,
                     logging.INFO,
@@ -130,9 +138,8 @@ def run_dashboard_refresh_cycle(db: Session) -> dict[str, int]:
     }
 
 
-def main() -> int:
-    started_at = time.time()
-    db = SessionLocal()
+def run_scheduled_dashboard_refresh_job(db: Session) -> dict[str, int]:
+    """Run one complete scheduled cycle and persist its real worker status."""
     try:
         update_worker_status(db, worker_name=DASHBOARD_REFRESH_WORKER_NAME)
         summary = run_dashboard_refresh_cycle(db)
@@ -143,14 +150,7 @@ def main() -> int:
             processed_count=summary["processed"],
             error_message=None,
         )
-        log_event(
-            logger,
-            logging.INFO,
-            "dashboard_refresh_worker_run_finished",
-            duration_ms=int((time.time() - started_at) * 1000),
-            summary=summary,
-        )
-        return 0
+        return summary
     except Exception as exc:
         db.rollback()
         update_worker_status(
@@ -161,6 +161,21 @@ def main() -> int:
             error_message=str(exc),
         )
         raise
+
+
+def main() -> int:
+    started_at = time.time()
+    db = SessionLocal()
+    try:
+        summary = run_scheduled_dashboard_refresh_job(db)
+        log_event(
+            logger,
+            logging.INFO,
+            "dashboard_refresh_worker_run_finished",
+            duration_ms=int((time.time() - started_at) * 1000),
+            summary=summary,
+        )
+        return 0
     finally:
         db.close()
 

@@ -7,5 +7,6 @@ from app.models.dataset_column import DatasetColumn  # noqa: F401
 from app.models.dataset_insight_run import DatasetInsightRun  # noqa: F401
 from app.models.query_history import QueryHistory  # noqa: F401
 from app.models.query_result import QueryResult  # noqa: F401
+from app.models.scheduler_invocation import SchedulerInvocation  # noqa: F401
 from app.models.user import User  # noqa: F401
 from app.models.worker_status import WorkerStatus  # noqa: F401
