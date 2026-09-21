@@ -194,7 +194,7 @@ export const nextAppTheme = createTheme({
             borderColor: alpha(tokens.color.accent.deepGreen, 0.64),
           },
           "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-            borderColor: tokens.color.accent.deepGreen,
+            borderColor: tokens.color.accent.signal,
             borderWidth: 2,
           },
         },
