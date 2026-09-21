@@ -108,7 +108,7 @@ export function DashboardGrid({
         },
         "& .react-grid-item": {
           background: "transparent",
-          transition: "transform 160ms ease",
+          transition: "transform 120ms ease",
         },
         "& .react-grid-item > *": {
           width: "100%",
@@ -125,7 +125,7 @@ export function DashboardGrid({
           breakpoints={{ lg: 1200, md: 900, sm: 600, xs: 360, xxs: 0 }}
           cols={BREAKPOINT_COLS}
           rowHeight={36}
-          margin={[20, 20]}
+          margin={[16, 16]}
           containerPadding={[0, 0]}
           dragConfig={{ enabled: false }}
           resizeConfig={{ enabled: false }}

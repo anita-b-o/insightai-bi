@@ -4,7 +4,6 @@ import { lazy, Suspense } from "react";
 import { BrowserRouter, Navigate, Route, Routes, useLocation, useParams } from "react-router-dom";
 
 import { AuthGuard, GuestGuard } from "@next/core/auth/guards";
-import { GeoPattern } from "@next/components/brand/geo-pattern";
 import { InsightBrand } from "@next/components/brand/insight-brand";
 import { NextAppShell } from "@next/layouts/app-shell";
 import { NextPublicLayout } from "@next/layouts/public-layout";
@@ -61,13 +60,11 @@ function RouterFallback() {
             width: "min(720px, 100%)",
             px: { xs: 2.4, md: 3 },
             py: { xs: 2.5, md: 3 },
-            borderRadius: tokens.radius.lg,
+            borderRadius: tokens.radius.md,
             border: `1px solid ${alpha(tokens.color.border.strong, 0.3)}`,
             backgroundColor: tokens.color.bg.surface,
-            boxShadow: tokens.shadow.sm,
           }}
         >
-          <GeoPattern density="quiet" sx={{ display: { xs: "none", sm: "block" }, left: "auto", width: 260, opacity: 0.14 }} />
           <InsightBrand sx={{ position: "relative", zIndex: 1 }} />
           <Typography variant="h3" sx={{ position: "relative", zIndex: 1, maxWidth: 640 }}>
             Finding the signal
@@ -96,7 +93,7 @@ function RouterFallback() {
       <Box
         sx={{
           display: { xs: "none", lg: "block" },
-            background: `linear-gradient(180deg, ${tokens.color.bg.inverse} 0%, #064232 100%)`,
+            backgroundColor: tokens.color.bg.surface,
           borderRight: `1px solid ${tokens.color.border.subtle}`,
         }}
       />
@@ -108,18 +105,18 @@ function RouterFallback() {
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            backgroundColor: tokens.color.bg.inverse,
-            color: tokens.color.fg.inverse,
-            borderBottom: `1px solid ${alpha(tokens.color.bg.surface, 0.08)}`,
+            backgroundColor: tokens.color.bg.surface,
+            color: tokens.color.fg.primary,
+            borderBottom: `1px solid ${tokens.color.border.subtle}`,
           }}
         >
           <Stack spacing={0.15}>
             <Typography variant="subtitle1">InsightAI BI</Typography>
-            <Typography variant="body2" sx={{ color: alpha(tokens.color.fg.inverse, 0.66) }}>
+            <Typography variant="body2" color="text.secondary">
               Data, interpreted.
             </Typography>
           </Stack>
-          <CircularProgress size={20} sx={{ color: tokens.color.fg.inverse }} />
+          <CircularProgress size={20} color="primary" />
         </Box>
         <Box sx={{ px: { xs: 2, md: 3.25, xl: 4 }, py: { xs: 3, md: 4.5 }, maxWidth: tokens.layout.appMaxWidth, mx: "auto" }}>
           <Stack

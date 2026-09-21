@@ -2,7 +2,6 @@ import type { ReactNode } from "react";
 import { alpha } from "@mui/material/styles";
 import { Box, Stack, Typography } from "@mui/material";
 
-import { GeoPattern } from "@next/components/brand/geo-pattern";
 import { tokens } from "@next/theme/tokens";
 
 export function PageHeader({
@@ -24,15 +23,12 @@ export function PageHeader({
       alignItems={{ xs: "flex-start", lg: "flex-end" }}
       sx={{
         position: "relative",
-        overflow: "hidden",
-        px: { xs: 1.4, md: 1.8 },
-        py: { xs: 1.45, md: 1.75 },
-        borderRadius: tokens.radius.lg,
-        borderBottom: `1px solid ${alpha(tokens.color.border.strong, 0.28)}`,
-        background: `linear-gradient(135deg, ${alpha(tokens.color.bg.surface, 0.92)} 0%, ${alpha(tokens.color.bg.elevated, 0.8)} 100%)`,
+        px: 0,
+        py: { xs: 1.5, md: 2 },
+        borderRadius: 0,
+        borderBottom: `1px solid ${alpha(tokens.color.border.strong, 0.5)}`,
       }}
     >
-      <GeoPattern density="quiet" sx={{ display: { xs: "none", lg: "block" }, left: "auto", width: { lg: 320 }, opacity: 0.18 }} />
       <Stack spacing={1} sx={{ position: "relative", zIndex: 1 }}>
         {typeof eyebrow === "string" ? (
           <Typography variant="overline" color="text.secondary">

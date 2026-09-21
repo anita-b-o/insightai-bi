@@ -14,9 +14,9 @@ export function Toolbar({ children }: PropsWithChildren) {
       alignItems={{ xs: "stretch", sm: "center" }}
       sx={{
         p: 1,
-        borderRadius: tokens.radius.md,
+        borderRadius: 0,
         border: `1px solid ${tokens.color.border.subtle}`,
-        backgroundColor: alpha(tokens.color.bg.surface, 0.82),
+        backgroundColor: tokens.color.bg.surface,
       }}
     >
       {children}

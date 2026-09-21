@@ -80,8 +80,8 @@ function buildReportElement({ dashboard, narrative, widgetsContainer }: ExportDa
   root.style.top = "0";
   root.style.width = "1240px";
   root.style.padding = "32px";
-  root.style.background = "#f3f7fc";
-  root.style.color = "#0f172a";
+  root.style.background = "#f4f3ef";
+  root.style.color = "#202523";
   root.style.fontFamily = "\"Inter\", \"Segoe UI\", sans-serif";
   root.style.lineHeight = "1.5";
   root.style.zIndex = "-1";
@@ -92,9 +92,9 @@ function buildReportElement({ dashboard, narrative, widgetsContainer }: ExportDa
     <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:24px;margin-bottom:16px;">
       <div>
         <div style="font-size:30px;font-weight:700;margin-bottom:4px;">${dashboard.name}</div>
-        <div style="font-size:14px;color:#475569;">Dashboard export</div>
+        <div style="font-size:14px;color:#5b625f;">Dashboard export</div>
       </div>
-      <div style="text-align:right;font-size:13px;color:#475569;">
+      <div style="text-align:right;font-size:13px;color:#5b625f;">
         <div>Exported: ${exportDate}</div>
         <div>Freshness: ${dashboard.freshness_status.replace(/_/g, " ")}</div>
         <div>Last successful refresh: ${formatDateTime(dashboard.last_successful_refresh_at)}</div>
@@ -104,23 +104,23 @@ function buildReportElement({ dashboard, narrative, widgetsContainer }: ExportDa
   root.appendChild(header);
 
   const summary = document.createElement("div");
-  summary.style.border = "1px solid #c6d8ee";
-  summary.style.borderRadius = "16px";
+  summary.style.border = "1px solid #959b97";
+  summary.style.borderRadius = "6px";
   summary.style.padding = "24px";
   summary.style.marginBottom = "20px";
-  summary.style.background = "linear-gradient(135deg, #0f172a 0%, #1d4ed8 58%, #0ea5e9 100%)";
-  summary.style.color = "#f8fafc";
+  summary.style.background = "#ffffff";
+  summary.style.color = "#202523";
   summary.innerHTML = `
-    <div style="font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:10px;color:rgba(248,250,252,0.72);">Dashboard narrative</div>
+    <div style="font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:10px;color:#0b6758;">Dashboard narrative</div>
     <div style="font-size:24px;font-weight:700;margin-bottom:12px;">Current interpretation</div>
-    <div style="font-size:14px;color:rgba(248,250,252,0.84);white-space:pre-wrap;">
+    <div style="font-size:14px;color:#5b625f;white-space:pre-wrap;">
       ${narrative?.summary?.trim() || "No narrative summary was available at export time. The report includes the current dashboard state and widget outputs."}
     </div>
     ${
       narrative?.key_findings?.length
         ? `<div style="margin-top:16px;">
              <div style="font-size:15px;font-weight:600;margin-bottom:8px;">Key findings</div>
-             <div style="font-size:14px;color:rgba(248,250,252,0.84);white-space:pre-wrap;">${toList(narrative.key_findings, 5)}</div>
+             <div style="font-size:14px;color:#5b625f;white-space:pre-wrap;">${toList(narrative.key_findings, 5)}</div>
            </div>`
         : ""
     }
@@ -129,28 +129,28 @@ function buildReportElement({ dashboard, narrative, widgetsContainer }: ExportDa
 
   if (narrative?.risks_or_caveats?.length) {
     const caveats = document.createElement("div");
-    caveats.style.border = "1px solid #fbbf24";
-    caveats.style.background = "#fffbeb";
-    caveats.style.borderRadius = "12px";
+    caveats.style.border = "1px solid #d9c391";
+    caveats.style.background = "#faf2df";
+    caveats.style.borderRadius = "4px";
     caveats.style.padding = "16px 20px";
     caveats.style.marginBottom = "20px";
     caveats.innerHTML = `
       <div style="font-size:16px;font-weight:600;margin-bottom:8px;">Caveats</div>
-      <div style="font-size:14px;color:#92400e;white-space:pre-wrap;">${toList(narrative.risks_or_caveats, 5)}</div>
+      <div style="font-size:14px;color:#785415;white-space:pre-wrap;">${toList(narrative.risks_or_caveats, 5)}</div>
     `;
     root.appendChild(caveats);
   }
 
   if (failedWidgets.length > 0 || dashboard.freshness_status === "failed") {
     const warning = document.createElement("div");
-    warning.style.border = "1px solid #f87171";
-    warning.style.background = "#fff1f2";
-    warning.style.borderRadius = "12px";
+    warning.style.border = "1px solid #d9a7a1";
+    warning.style.background = "#fff1ef";
+    warning.style.borderRadius = "4px";
     warning.style.padding = "16px 20px";
     warning.style.marginBottom = "20px";
     warning.innerHTML = `
       <div style="font-size:16px;font-weight:600;margin-bottom:8px;">Warnings</div>
-      <div style="font-size:14px;color:#9f1239;white-space:pre-wrap;">
+      <div style="font-size:14px;color:#a13227;white-space:pre-wrap;">
         ${
           failedWidgets.length
             ? toList(
@@ -165,8 +165,8 @@ function buildReportElement({ dashboard, narrative, widgetsContainer }: ExportDa
   }
 
   const widgetsSection = document.createElement("div");
-  widgetsSection.style.border = "1px solid #d7e4f2";
-  widgetsSection.style.borderRadius = "16px";
+  widgetsSection.style.border = "1px solid #cfd1cb";
+  widgetsSection.style.borderRadius = "6px";
   widgetsSection.style.padding = "24px";
   widgetsSection.style.background = "#ffffff";
   widgetsSection.innerHTML = `<div style="font-size:20px;font-weight:600;margin-bottom:16px;">Widgets</div>`;
@@ -174,7 +174,7 @@ function buildReportElement({ dashboard, narrative, widgetsContainer }: ExportDa
   if (!dashboard.widgets.length) {
     const emptyState = document.createElement("div");
     emptyState.style.fontSize = "14px";
-    emptyState.style.color = "#475569";
+    emptyState.style.color = "#5b625f";
     emptyState.textContent = "This dashboard has no widgets yet. The export contains metadata and narrative only.";
     widgetsSection.appendChild(emptyState);
   } else if (widgetsContainer) {
@@ -186,7 +186,7 @@ function buildReportElement({ dashboard, narrative, widgetsContainer }: ExportDa
   } else {
     const fallback = document.createElement("div");
     fallback.style.fontSize = "14px";
-    fallback.style.color = "#475569";
+    fallback.style.color = "#5b625f";
     fallback.textContent = "Widget content was not available in the current view, so only dashboard metadata could be exported.";
     widgetsSection.appendChild(fallback);
   }

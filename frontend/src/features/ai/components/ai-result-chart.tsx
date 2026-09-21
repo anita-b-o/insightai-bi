@@ -309,9 +309,9 @@ function TooltipContent({
         px: 1.1,
         py: 0.95,
         borderRadius: tokens.radius.sm,
-        border: `1px solid ${alpha(tokens.color.border.subtle, 0.82)}`,
+        border: `1px solid ${tokens.color.border.strong}`,
         backgroundColor: tokens.color.bg.surface,
-        boxShadow: tokens.shadow.sm,
+        boxShadow: "none",
       }}
     >
       {label ? (
@@ -353,8 +353,8 @@ function buildChartElement(model: ChartModel, palette: readonly string[]) {
           <XAxis {...buildCategoryAxisProps(model.xKey)} />
           <YAxis {...buildNumericAxisProps()} />
           <Tooltip content={<TooltipContent />} />
-          <Legend wrapperStyle={{ paddingTop: 12, fontSize: 11 }} />
-          <Bar dataKey={model.yKey} radius={[2, 2, 0, 0]} fill={palette[0]} />
+          <Legend wrapperStyle={{ paddingTop: 12, fontSize: 11, color: tokens.color.fg.secondary }} />
+          <Bar dataKey={model.yKey} radius={[0, 0, 0, 0]} fill={palette[0]} />
         </BarChart>
       );
     case "line":
@@ -364,7 +364,7 @@ function buildChartElement(model: ChartModel, palette: readonly string[]) {
           <XAxis {...buildCategoryAxisProps(model.xKey)} />
           <YAxis {...buildNumericAxisProps()} />
           <Tooltip content={<TooltipContent />} />
-          <Legend wrapperStyle={{ paddingTop: 12, fontSize: 11 }} />
+          <Legend wrapperStyle={{ paddingTop: 12, fontSize: 11, color: tokens.color.fg.secondary }} />
           <Line type="monotone" dataKey={model.yKey} stroke={palette[1]} strokeWidth={2.5} dot={{ r: 2.5 }} activeDot={{ r: 4 }} />
         </LineChart>
       );
@@ -372,7 +372,7 @@ function buildChartElement(model: ChartModel, palette: readonly string[]) {
       return (
         <PieChart margin={{ top: 14, right: 12, bottom: 18, left: 12 }}>
           <Tooltip content={<TooltipContent />} />
-          <Legend wrapperStyle={{ paddingTop: 10, fontSize: 11 }} />
+          <Legend wrapperStyle={{ paddingTop: 10, fontSize: 11, color: tokens.color.fg.secondary }} />
           <Pie data={model.data} dataKey={model.yKey} nameKey={model.xKey} innerRadius={40} outerRadius={76} paddingAngle={2}>
             {model.data.map((entry, index) => (
               <Cell key={`${entry[model.xKey] ?? index}`} fill={palette[index % palette.length]} />
@@ -388,7 +388,7 @@ function buildChartElement(model: ChartModel, palette: readonly string[]) {
           <YAxis type="number" {...buildNumericAxisProps(model.yKey)} />
           <ZAxis range={[50, 50]} />
           <Tooltip content={<TooltipContent />} cursor={{ strokeDasharray: "3 3" }} />
-          <Legend wrapperStyle={{ paddingTop: 12, fontSize: 11 }} />
+          <Legend wrapperStyle={{ paddingTop: 12, fontSize: 11, color: tokens.color.fg.secondary }} />
           <Scatter name={formatChartLabel(model.yKey)} fill={palette[4]} shape={ScatterPointShape} />
         </ScatterChart>
       );

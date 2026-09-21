@@ -3,7 +3,6 @@ import { Alert, AlertTitle, Box, Button, Skeleton, Stack, Typography } from "@mu
 import { alpha } from "@mui/material/styles";
 
 import { OpenSection, SectionBlock } from "./surface-card";
-import { GeoPattern } from "@next/components/brand/geo-pattern";
 import { tokens } from "@next/theme/tokens";
 
 export function LoadingState({
@@ -45,14 +44,13 @@ export function EmptyState({
         sx={{
           position: "relative",
           overflow: "hidden",
-          borderRadius: tokens.radius.lg,
+          borderRadius: tokens.radius.md,
           border: `1px solid ${alpha(tokens.color.border.strong, 0.34)}`,
           backgroundColor: tokens.color.bg.surface,
           px: { xs: 1.75, md: 2.15 },
           py: { xs: 1.8, md: 2.15 },
         }}
       >
-        <GeoPattern density="quiet" sx={{ left: "auto", width: { xs: 160, md: 260 }, opacity: 0.18 }} />
         <Stack spacing={1.1} sx={{ position: "relative", zIndex: 1, maxWidth: 720 }}>
           <Typography variant="overline" color="text.secondary">
             Empty state

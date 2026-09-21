@@ -18,11 +18,9 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { alpha } from "@mui/material/styles";
 import { useMemo, useState } from "react";
 import { Link as RouterLink, Outlet, useLocation } from "react-router-dom";
 
-import { GeoPattern } from "@next/components/brand/geo-pattern";
 import { InsightBrand } from "@next/components/brand/insight-brand";
 import { useAuth } from "@next/core/auth/session";
 import { tokens } from "@next/theme/tokens";
@@ -53,16 +51,16 @@ function AppNavigation({ onNavigate }: { onNavigate?: () => void }) {
               selected={selected}
               onClick={onNavigate}
               sx={{
-                borderRadius: tokens.radius.xs,
+                borderRadius: 0,
                 alignItems: "center",
-                color: alpha(tokens.color.fg.inverse, selected ? 1 : 0.78),
-                backgroundColor: selected ? alpha(tokens.color.bg.surface, 0.12) : "transparent",
-                borderLeft: selected ? `3px solid ${tokens.color.accent.signal}` : "3px solid transparent",
+                color: selected ? tokens.color.accent.deepGreen : tokens.color.fg.secondary,
+                backgroundColor: selected ? tokens.color.bg.surfaceMuted : "transparent",
+                borderLeft: selected ? `2px solid ${tokens.color.accent.deepGreen}` : "2px solid transparent",
                 "&:hover": {
-                  backgroundColor: alpha(tokens.color.bg.surface, 0.1),
+                  backgroundColor: tokens.color.bg.surfaceMuted,
                 },
                 "& .MuiListItemIcon-root": {
-                  color: alpha(tokens.color.fg.inverse, selected ? 1 : 0.72),
+                  color: selected ? tokens.color.accent.deepGreen : tokens.color.fg.secondary,
                 },
               }}
             >
@@ -97,14 +95,13 @@ export function NextAppShell() {
         height: "100%",
         p: 2,
         position: "relative",
-        background: `linear-gradient(180deg, ${tokens.color.bg.inverse} 0%, #064232 100%)`,
-        color: tokens.color.fg.inverse,
+        backgroundColor: tokens.color.bg.surface,
+        color: tokens.color.fg.primary,
         display: "flex",
         flexDirection: "column",
         overflow: "hidden",
       }}
     >
-      <GeoPattern inverted density="quiet" sx={{ opacity: 0.09 }} />
       <Box
         sx={{
           position: "relative",
@@ -123,12 +120,12 @@ export function NextAppShell() {
       <Stack spacing={2} sx={{ position: "relative", zIndex: 1, flexShrink: 0, mt: "auto" }}>
         <Divider />
         <Stack direction="row" spacing={1.5} alignItems="center">
-          <Avatar sx={{ bgcolor: alpha(tokens.color.bg.surface, 0.14), color: tokens.color.fg.inverse }}>{initials}</Avatar>
+          <Avatar sx={{ bgcolor: tokens.color.bg.surfaceMuted, color: tokens.color.accent.deepGreen }}>{initials}</Avatar>
           <Box sx={{ minWidth: 0 }}>
             <Typography variant="subtitle2" noWrap>
               {user?.full_name ?? "Workspace user"}
             </Typography>
-            <Typography variant="body2" sx={{ color: alpha(tokens.color.fg.inverse, 0.66) }} noWrap>
+            <Typography variant="body2" color="text.secondary" noWrap>
               {user?.email ?? "No email"}
             </Typography>
           </Box>
@@ -138,9 +135,9 @@ export function NextAppShell() {
           startIcon={<LogoutRoundedIcon />}
           onClick={logout}
           sx={{
-            color: tokens.color.fg.inverse,
-            borderColor: alpha(tokens.color.bg.surface, 0.18),
-            backgroundColor: "transparent",
+            color: tokens.color.fg.primary,
+            borderColor: tokens.color.border.strong,
+            backgroundColor: tokens.color.bg.surface,
           }}
         >
           Logout
@@ -169,7 +166,7 @@ export function NextAppShell() {
             height: 56,
             alignItems: "center",
             px: 1.25,
-            backgroundColor: tokens.color.bg.canvas,
+            backgroundColor: tokens.color.bg.surface,
             borderBottom: `1px solid ${tokens.color.border.subtle}`,
           }}
         >

@@ -1,7 +1,7 @@
 import RefreshRoundedIcon from "@mui/icons-material/RefreshRounded";
 import ExpandMoreRoundedIcon from "@mui/icons-material/ExpandMoreRounded";
 import { alpha } from "@mui/material/styles";
-import { Accordion, AccordionDetails, AccordionSummary, Alert, Box, Button, Chip, Stack, Typography } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Alert, Box, Button, Stack, Typography } from "@mui/material";
 
 import { StatusBadge } from "@next/components/ui/status-badge";
 import { OpenSection } from "@next/components/ui/surface-card";
@@ -109,14 +109,9 @@ export function DashboardWidget({
         <Stack direction={{ xs: "column", sm: "row" }} spacing={1.2} justifyContent="space-between" alignItems={{ xs: "flex-start", sm: "flex-start" }}>
           <Stack spacing={0.85} sx={{ minWidth: 0 }}>
             <Stack direction="row" spacing={0.9} useFlexGap flexWrap="wrap" alignItems="center">
-              <Chip
-                size="small"
-                label={widget.widget_type}
-                sx={{
-                  borderRadius: tokens.radius.xs,
-                  backgroundColor: tokens.color.bg.canvas,
-                }}
-              />
+              <Typography variant="caption" sx={{ color: tokens.color.fg.secondary, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}>
+                {widget.widget_type}
+              </Typography>
               <StatusBadge label={widgetExecutionLabel(widget.execution_status)} tone={widgetExecutionTone(widget.execution_status)} />
               {widget.last_run_at ? (
                 <Typography variant="caption" color="text.secondary">

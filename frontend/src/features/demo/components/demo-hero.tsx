@@ -3,9 +3,9 @@ import { Box, Button, Chip, Stack, Typography } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import { Link as RouterLink } from "react-router-dom";
 
-import { GeoPattern } from "@next/components/brand/geo-pattern";
 import { InsightBrand } from "@next/components/brand/insight-brand";
 import { InlineStatItem, InlineStatRow } from "@next/components/ui/surface-card";
+import foxImage from "@next/assets/brand/fox.png";
 import { tokens } from "@next/theme/tokens";
 
 import type { DemoExperience } from "../types";
@@ -18,21 +18,17 @@ export function DemoHero({ demo }: { demo: DemoExperience }) {
         width: "100%",
         position: "relative",
         overflow: "hidden",
-        borderRadius: 0,
-        borderTop: `1px solid ${tokens.color.border.subtle}`,
-        borderBottom: `1px solid ${alpha(tokens.color.border.strong, 0.32)}`,
+        borderBottom: `1px solid ${tokens.color.border.strong}`,
         backgroundColor: tokens.color.bg.surface,
+        display: "grid",
+        gridTemplateColumns: { xs: "1fr", md: "minmax(0, 1.1fr) minmax(320px, 0.9fr)" },
       }}
     >
-      <GeoPattern density="quiet" sx={{ left: "auto", width: { xs: 180, sm: 260, md: 380 }, opacity: { xs: 0.1, sm: 0.16, md: 0.2 } }} />
       <Box
         sx={{
           width: "100%",
-          maxWidth: tokens.layout.appMaxWidth,
-          mx: "auto",
-          px: { xs: 2, md: 3, xl: 3.5 },
-          pt: { xs: 2.05, md: 2.35 },
-          pb: { xs: 2, md: 2.2 },
+          px: { xs: 2, md: 5, xl: 7 },
+          py: { xs: 3, md: 6 },
         }}
       >
         <Stack data-testid="demo-hero-content" spacing={2.15} sx={{ position: "relative", zIndex: 1 }}>
@@ -57,17 +53,7 @@ export function DemoHero({ demo }: { demo: DemoExperience }) {
             </Stack>
           </Stack>
         </Stack>
-      </Box>
-      <Box
-        sx={{
-          width: "100%",
-          maxWidth: tokens.layout.appMaxWidth,
-          mx: "auto",
-          px: { xs: 2, md: 3, xl: 3.5 },
-          pb: { xs: 2.05, md: 2.35 },
-        }}
-      >
-        <Box sx={{ position: "relative", zIndex: 1 }}>
+        <Box sx={{ position: "relative", zIndex: 1, pt: 3 }}>
           <InlineStatRow columns={3}>
             <InlineStatItem label="Dataset" value={demo.dataset.name} detail="Analysis sample" />
             <InlineStatItem label="Coverage" value={`${demo.dataset.rowCount} rows · ${demo.dataset.columnCount} columns`} detail="Compact BI walkthrough" />
@@ -84,6 +70,9 @@ export function DemoHero({ demo }: { demo: DemoExperience }) {
             />
           </InlineStatRow>
         </Box>
+      </Box>
+      <Box sx={{ display: { xs: "none", md: "block" }, position: "relative", overflow: "hidden", backgroundColor: "#000", borderLeft: `1px solid ${tokens.color.border.strong}`, minHeight: 460 }}>
+        <Box component="img" src={foxImage} alt="" aria-hidden sx={{ position: "absolute", width: "118%", maxWidth: "none", right: "-17%", top: "50%", transform: "translateY(-50%)", objectFit: "contain" }} />
       </Box>
     </Box>
   );
