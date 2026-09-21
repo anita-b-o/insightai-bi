@@ -39,7 +39,7 @@ function AppNavigation({ onNavigate }: { onNavigate?: () => void }) {
 
   return (
     <Stack spacing={1.25} sx={{ flexShrink: 0 }}>
-      <InsightBrand tone="inverse" />
+      <InsightBrand />
       <List disablePadding sx={{ display: "grid", gap: 0.5 }}>
         {navigationItems.map((item) => {
           const selected = location.pathname === item.to || location.pathname.startsWith(`${item.to}/`);
