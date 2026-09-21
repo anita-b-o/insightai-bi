@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
 from sqlalchemy.orm import Session, joinedload
 
@@ -9,7 +7,7 @@ from app.models.dataset import Dataset
 from app.models.user import User
 from app.schemas.ai import AIInsightsResponse, DatasetInsightRunSummary
 from app.schemas.dataset import DatasetListItem, DatasetRead
-from app.services.dataset_service import process_uploaded_csv
+from app.services.dataset_service import delete_dataset, process_uploaded_csv
 from app.services.insight_service import generate_and_save_insights, get_latest_insights, list_insight_runs
 
 router = APIRouter(prefix="/datasets", tags=["datasets"])
@@ -23,9 +21,6 @@ async def upload_dataset(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> Dataset:
-    if Path(file.filename or "").suffix.lower() != ".csv":
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Only CSV files are allowed")
-
     dataset = await process_uploaded_csv(
         db=db,
         owner_id=current_user.id,
@@ -34,6 +29,15 @@ async def upload_dataset(
         upload=file,
     )
     return dataset
+
+
+@router.delete("/{dataset_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_dataset_route(
+    dataset_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> None:
+    delete_dataset(db=db, current_user=current_user, dataset_id=dataset_id)
 
 
 @router.get("", response_model=list[DatasetListItem])

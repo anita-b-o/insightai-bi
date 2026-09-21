@@ -5,9 +5,7 @@ services:
     rootDir: backend
     dockerfilePath: ./Dockerfile
     dockerContext: .
-    # Free Web Services have an ephemeral filesystem. Dataset uploads therefore
-    # need durable object storage before this Blueprint can safely be used for
-    # a production service that must retain uploaded CSV source files.
+    # CSV files are transient ingestion artifacts; PostgreSQL retains datasets.
     plan: free
     healthCheckPath: /health
     preDeployCommand: alembic upgrade head
@@ -21,8 +19,16 @@ services:
         sync: false
       - key: DATABASE_DIRECT_URL
         sync: false
-      - key: STORAGE_PATH
-        value: storage/datasets
+      - key: MAX_UPLOAD_BYTES
+        value: "10485760"
+      - key: MAX_DATASET_ROWS
+        value: "50000"
+      - key: MAX_DATASET_COLUMNS
+        value: "100"
+      - key: MAX_CELL_LENGTH
+        value: "16384"
+      - key: FEATURE_SELECTION_SAMPLE_ROWS
+        value: "10000"
       - key: BACKEND_CORS_ORIGINS
         sync: false
       - key: SECRET_KEY

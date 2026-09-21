@@ -64,7 +64,11 @@ APP_ENV=production
 API_V1_PREFIX=/api
 DATABASE_URL=<Neon pooled URL>
 DATABASE_DIRECT_URL=<Neon direct URL>
-STORAGE_PATH=/var/data/datasets
+MAX_UPLOAD_BYTES=10485760
+MAX_DATASET_ROWS=50000
+MAX_DATASET_COLUMNS=100
+MAX_CELL_LENGTH=16384
+FEATURE_SELECTION_SAMPLE_ROWS=10000
 BACKEND_CORS_ORIGINS=["https://mi-proyecto.vercel.app"]
 SECRET_KEY=<generado por Render o valor seguro>
 OPENAI_API_KEY=<configurar si se usa IA>
@@ -100,27 +104,15 @@ Para previews de Vercel, agregar explicitamente cada dominio preview que se quie
 
 El frontend usa tokens Bearer en `Authorization` desde `localStorage`; no depende de cookies cross-site.
 
-## CSV y disco persistente
+## CSV transitorio y límites de upload
 
-Local:
-
-```sh
-STORAGE_PATH=storage/datasets
-```
-
-Render con persistencia:
-
-```sh
-STORAGE_PATH=/var/data/datasets
-```
-
-Montar un Persistent Disk en:
-
-```sh
-/var/data
-```
-
-El `render.yaml` declara un disco de 1 GB en `/var/data`. Los discos persistentes requieren instancia paga. Si se usa un plan gratuito sin disco, el filesystem de Render es efimero y los CSV pueden perderse en reinicios o redeploys.
+El CSV sólo existe durante la ingestión; no se escribe en el filesystem. PostgreSQL
+guarda `datasets`, `dataset_columns` y cada tabla dinámica `dataset_<id>`, por lo
+que Render Free puede reiniciar o reemplazar el contenedor sin perder datasets
+correctamente importados. Los defaults están pensados para demo/Render Free y
+Neon Free: 10 MiB por upload, 50.000 filas, 100 columnas, celdas de 16.384
+caracteres y una muestra de insights de 10.000 filas. Se pueden ajustar por
+variables de entorno según el presupuesto de RAM y base de datos.
 
 ## Refresh programado de dashboards en Render Free
 

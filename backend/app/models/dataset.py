@@ -13,7 +13,9 @@ class Dataset(Base):
     name: Mapped[str] = mapped_column(String(255))
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
     original_filename: Mapped[str] = mapped_column(String(255))
-    storage_path: Mapped[str] = mapped_column(String(500))
+    # Deprecated compatibility field. Historical values are intentionally
+    # retained during the phased rollout, but application code never reads it.
+    storage_path: Mapped[str | None] = mapped_column(String(500), nullable=True)
     table_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
     file_size_bytes: Mapped[int] = mapped_column(Integer)
     row_count: Mapped[int] = mapped_column(Integer)

@@ -124,7 +124,10 @@ Routes are lazy-loaded to reduce initial bundle size for the unauthenticated she
 CSV upload
 -> Pandas ingestion
 -> schema profile
--> dataset + column metadata persisted
+-> dataset + column metadata + dataset_<id> persisted in PostgreSQL
+
+The CSV is discarded after a successful ingest. PostgreSQL is the only
+persistent source of truth for datasets and all post-upload operations.
 ```
 
 ### 2. Insights generation

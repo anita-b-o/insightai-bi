@@ -1,6 +1,10 @@
 import pandas as pd
+from sqlalchemy import create_engine, text
+from sqlalchemy.orm import Session
 
-from app.services.feature_selection_service import compute_feature_scores, select_top_features
+from app.models.dataset import Dataset
+from app.models.dataset_column import DatasetColumn
+from app.services.feature_selection_service import compute_feature_scores, load_dataset_dataframe, select_top_features
 
 
 def _profile_for_columns(columns: list[str]) -> list[dict[str, object]]:
@@ -85,3 +89,20 @@ def test_select_top_features_returns_highest_ranked_columns():
 
     assert len(top_features) == 2
     assert top_features[0].final_score >= top_features[1].final_score
+
+
+def test_feature_selection_loads_a_bounded_sql_sample(monkeypatch):
+    engine = create_engine("sqlite://", future=True)
+    with engine.begin() as connection:
+        connection.execute(text('CREATE TABLE "dataset_1" ("amount" INTEGER, "segment" TEXT)'))
+        connection.execute(text('INSERT INTO "dataset_1" (amount, segment) VALUES (1, "A"), (2, "B"), (3, "C")'))
+    dataset = Dataset(id=1, table_name="dataset_1", name="Test", original_filename="test.csv", storage_path=None, file_size_bytes=1, row_count=3, column_count=2, owner_id=1)
+    dataset.columns = [
+        DatasetColumn(name="Amount", sql_name="amount", position=0, inferred_type="integer", nullable=False),
+        DatasetColumn(name="Segment", sql_name="segment", position=1, inferred_type="string", nullable=False),
+    ]
+    monkeypatch.setattr("app.services.feature_selection_service.settings.feature_selection_sample_rows", 2)
+    with Session(engine) as db:
+        dataframe = load_dataset_dataframe(db, dataset)
+    assert list(dataframe.columns) == ["Amount", "Segment"]
+    assert len(dataframe) == 2

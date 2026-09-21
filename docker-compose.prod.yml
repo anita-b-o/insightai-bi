@@ -26,8 +26,6 @@ services:
       - ./deploy/backend.prod.env
     environment:
       APP_ENV: production
-    volumes:
-      - app_storage:/app/storage
     depends_on:
       db:
         condition: service_healthy
@@ -92,8 +90,6 @@ services:
       - ./deploy/backend.prod.env
     environment:
       APP_ENV: production
-    volumes:
-      - app_storage:/app/storage
     depends_on:
       db:
         condition: service_healthy
@@ -116,6 +112,5 @@ services:
 
 volumes:
   postgres_data:
-  app_storage:
   caddy_data:
   caddy_config:

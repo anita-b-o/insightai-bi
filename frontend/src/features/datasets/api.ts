@@ -39,3 +39,7 @@ export async function uploadDataset(formData: FormData): Promise<DatasetDetailDt
   const { data } = await nextApiClient.post<DatasetDetailDto>("/datasets/upload", formData);
   return data;
 }
+
+export async function deleteDataset(datasetId: number): Promise<void> {
+  await nextApiClient.delete(`/datasets/${datasetId}`);
+}

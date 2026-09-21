@@ -216,9 +216,9 @@ def _quality_gate(insight: AIInsight | None) -> AIInsight | None:
     return insight
 
 
-def _compute_feature_scores_safe(dataset: Dataset, profile: list[dict[str, object]]) -> list[FeatureScore]:
+def _compute_feature_scores_safe(db: Session, dataset: Dataset, profile: list[dict[str, object]]) -> list[FeatureScore]:
     try:
-        dataframe = load_dataset_dataframe(dataset)
+        dataframe = load_dataset_dataframe(db, dataset)
         return compute_feature_scores(dataframe, profile)
     except Exception:
         logger.exception("dataset_feature_selection_failed", extra={"dataset_id": dataset.id})
@@ -953,7 +953,7 @@ def _serialize_insight_run_detail(run: DatasetInsightRun, dataset: Dataset | Non
 
 def generate_insights(*, db: Session, dataset: Dataset) -> AIInsightsResponse:
     base_profile = build_dataset_schema_profile(dataset)
-    feature_scores = _compute_feature_scores_safe(dataset, base_profile)
+    feature_scores = _compute_feature_scores_safe(db, dataset, base_profile)
     profile = _prioritize_profile_by_feature_scores(base_profile, feature_scores)
     numeric_columns = [item for item in profile if _is_metric_profile(item)]
     categorical_columns = [item for item in profile if item.get("semantic_type") == "categorical" and _is_grouping_profile(item)]

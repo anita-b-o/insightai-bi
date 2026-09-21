@@ -20,25 +20,11 @@ Optional output location:
 BACKUP_DIR=/srv/backups/insightai-bi/db ./scripts/backup-db.sh
 ```
 
-## Storage Backup
-
-Create a compressed archive of uploaded dataset storage:
-
-```bash
-./scripts/backup-storage.sh
-```
-
-For production:
-
-```bash
-COMPOSE_FILE_PATH=docker-compose.prod.yml ./scripts/backup-storage.sh
-```
-
-Optional output location:
-
-```bash
-BACKUP_DIR=/srv/backups/insightai-bi/storage ./scripts/backup-storage.sh
-```
+The PostgreSQL dump is the complete persistent dataset backup. It must include
+normal application tables, every dynamic `dataset_<id>` table, and
+`alembic_version`. Model metadata and Alembic migrations cannot recreate the
+contents of dynamic dataset tables. Any future Neon migration must copy those
+tables as well as the regular schema.
 
 ## Database Restore
 
@@ -54,24 +40,12 @@ For production:
 COMPOSE_FILE_PATH=docker-compose.prod.yml BACKEND_ENV_FILE=deploy/backend.prod.env ./scripts/restore-db.sh backups/db/insightai_bi_20260511T120000Z.sql.gz
 ```
 
-## Manual Storage Restore
-
-1. Stop write traffic to the application.
-2. Stop `backend` and `dashboard-refresh-worker`.
-3. Extract the archive back into `/app/storage` using the backend container or a temporary container with the `app_storage` volume mounted.
-4. Start `backend` and `dashboard-refresh-worker`.
-5. Run the post-deploy smoke checklist.
-
-Example:
-
-```bash
-cat backups/storage/app_storage_20260511T120000Z.tar.gz | docker compose exec -T backend tar xzf - -C /app
-```
+CSV storage is not backed up or restored: uploads are transient ingestion
+artifacts and PostgreSQL is the sole persistent source of truth.
 
 ## Minimum Retention Recommendation
 
 - database: 7 daily, 4 weekly, 3 monthly
-- storage: 7 daily, 4 weekly
 
 ## Recovery Validation
 

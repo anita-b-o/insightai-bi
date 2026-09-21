@@ -1,5 +1,4 @@
 from functools import lru_cache
-from pathlib import Path
 
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -26,7 +25,13 @@ class Settings(BaseSettings):
         "http://localhost:5174",
         "http://127.0.0.1:5174",
     ]
-    storage_path: str = "storage/datasets"
+    # CSV uploads are transient ingestion artifacts. Keep no runtime filesystem
+    # configuration for datasets: PostgreSQL is the persistent source of truth.
+    max_upload_bytes: int = 10 * 1024 * 1024
+    max_dataset_rows: int = 50_000
+    max_dataset_columns: int = 100
+    max_cell_length: int = 16_384
+    feature_selection_sample_rows: int = 10_000
     openai_api_key: str | None = None
     openai_model: str = "gpt-4.1-mini"
     openai_timeout_seconds: float = 45.0
@@ -58,10 +63,6 @@ class Settings(BaseSettings):
         if self.database_direct_url:
             return self._normalize_database_url(self.database_direct_url)
         return self.sqlalchemy_database_uri
-
-    @property
-    def storage_dir(self) -> Path:
-        return Path(self.storage_path)
 
     @property
     def scheduler_heartbeat_timeout_seconds(self) -> int:
@@ -103,7 +104,6 @@ def get_settings() -> Settings:
             raise ValueError("SECRET_KEY must be overridden in production")
         if settings.openai_api_key and settings.openai_api_key == "replace-me":
             raise ValueError("OPENAI_API_KEY must be overridden in production")
-    settings.storage_dir.mkdir(parents=True, exist_ok=True)
     return settings
 
 

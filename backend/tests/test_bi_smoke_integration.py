@@ -58,6 +58,13 @@ def _truncate_database() -> None:
     engine = create_engine(settings.sqlalchemy_database_uri, future=True, pool_pre_ping=True)
     try:
         with engine.begin() as connection:
+            dynamic_tables = [
+                table_name
+                for table_name in inspect(connection).get_table_names()
+                if table_name.startswith("dataset_") and table_name.removeprefix("dataset_").isdigit()
+            ]
+            for table_name in dynamic_tables:
+                connection.execute(text(f'DROP TABLE "{table_name}"'))
             connection.execute(text(f"TRUNCATE TABLE {', '.join(table_names)} RESTART IDENTITY CASCADE"))
     finally:
         engine.dispose()
@@ -71,10 +78,6 @@ def postgres_schema_ready() -> None:
 
 @pytest.fixture(autouse=True)
 def isolated_backend_state(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> Generator[None, None, None]:
-    storage_dir = tmp_path / "datasets"
-    storage_dir.mkdir(parents=True, exist_ok=True)
-
-    monkeypatch.setattr(settings, "storage_path", str(storage_dir))
     monkeypatch.setattr(settings, "openai_api_key", None)
 
     _truncate_database()
@@ -211,6 +214,44 @@ def test_backend_migrations_apply_to_postgres(postgres_schema_ready):
 
     for table_name in TEST_TABLES:
         assert table_name in table_names
+
+
+def test_dataset_delete_removes_owned_metadata_and_dynamic_table(
+    client: TestClient,
+    auth_headers: dict[str, str],
+    dataset: dict[str, object],
+):
+    dataset_id = int(dataset["id"])
+    response = client.delete(f"/api/datasets/{dataset_id}", headers=auth_headers)
+    assert response.status_code == 204, response.text
+    assert client.get(f"/api/datasets/{dataset_id}", headers=auth_headers).status_code == 404
+    engine = create_engine(settings.sqlalchemy_database_uri, future=True)
+    try:
+        assert f"dataset_{dataset_id}" not in inspect(engine).get_table_names()
+    finally:
+        engine.dispose()
+
+
+def test_dataset_delete_rejects_non_owner(
+    client: TestClient,
+    auth_headers: dict[str, str],
+    second_user_headers: dict[str, str],
+    dataset: dict[str, object],
+):
+    response = client.delete(f"/api/datasets/{dataset['id']}", headers=second_user_headers)
+    assert response.status_code == 404
+    assert client.get(f"/api/datasets/{dataset['id']}", headers=auth_headers).status_code == 200
+
+
+def test_dataset_delete_rejects_dashboard_references(
+    client: TestClient,
+    auth_headers: dict[str, str],
+    dataset: dict[str, object],
+    dashboard: dict[str, object],
+):
+    response = client.delete(f"/api/datasets/{dataset['id']}", headers=auth_headers)
+    assert response.status_code == 409
+    assert "dashboard" in response.json()["detail"].lower()
 
 
 def test_bi_smoke_flow_end_to_end(

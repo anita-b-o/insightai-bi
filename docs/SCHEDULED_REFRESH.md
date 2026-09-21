@@ -39,11 +39,9 @@ GitHub schedules are best-effort, and a Render Free cold start can delay a
 cycle. A stale `/health/worker` result is intentionally an operational signal,
 not a request to suppress the check.
 
-## Free Render storage limitation
+## Dataset persistence on Render Free
 
-Render Free cannot attach a persistent disk. InsightAI currently stores the
-original CSV at `Dataset.storage_path`, so a restart, deploy, or sleep can
-remove those source files. Dataset tables already materialized in PostgreSQL
-remain, but operations that require rereading the original CSV can fail. This
-is a separate storage architecture issue; this scheduler change does not solve
-or hide it.
+CSV files are transient ingestion artifacts. Imported `dataset_<id>` tables
+and their metadata live in PostgreSQL, so a restart, sleep, redeploy, or
+container replacement does not affect correctly imported datasets. Scheduled
+refresh reads PostgreSQL only.

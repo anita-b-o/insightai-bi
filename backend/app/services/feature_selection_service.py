@@ -2,13 +2,15 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from math import log2
-from pathlib import Path
-
 import pandas as pd
+from sqlalchemy import text
+from sqlalchemy.orm import Session
 
+from app.core.config import settings
 from app.models.dataset import Dataset
+from app.services.dataset_service import SQL_IDENTIFIER_PATTERN, validate_dataset_table_name
 
-MAX_FEATURE_SELECTION_ROWS = 100_000
+MAX_FEATURE_SELECTION_ROWS = settings.feature_selection_sample_rows
 
 
 @dataclass(slots=True)
@@ -180,6 +182,14 @@ def select_top_features(scores: list[FeatureScore], k: int = 5) -> list[FeatureS
     return sorted(scores, key=lambda item: item.final_score, reverse=True)[:k]
 
 
-def load_dataset_dataframe(dataset: Dataset) -> pd.DataFrame:
-    csv_path = Path(dataset.storage_path)
-    return pd.read_csv(csv_path)
+def load_dataset_dataframe(db: Session, dataset: Dataset) -> pd.DataFrame:
+    """Load a bounded PostgreSQL sample with explicit, trusted identifiers."""
+    table_name = validate_dataset_table_name(dataset)
+    ordered_columns = sorted(dataset.columns, key=lambda column: column.position)
+    if not ordered_columns or any(not column.sql_name or not SQL_IDENTIFIER_PATTERN.fullmatch(column.sql_name) for column in ordered_columns):
+        raise ValueError("Dataset column metadata is invalid")
+    quoted_columns = ", ".join(f'"{column.sql_name}"' for column in ordered_columns)
+    statement = text(f'SELECT {quoted_columns} FROM "{table_name}" LIMIT :sample_rows')
+    dataframe = pd.read_sql(statement, db.connection(), params={"sample_rows": settings.feature_selection_sample_rows})
+    dataframe.columns = [column.name for column in ordered_columns]
+    return dataframe

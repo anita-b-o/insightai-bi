@@ -15,10 +15,11 @@ from app.models.dataset import Dataset
 from app.models.dataset_column import DatasetColumn
 from app.models.user import User
 from app.services import dataset_service
+from app.core.config import settings
 
 
 @pytest.fixture()
-def client(tmp_path) -> Generator[TestClient, None, None]:
+def client() -> Generator[TestClient, None, None]:
     engine = create_engine(
         "sqlite://",
         connect_args={"check_same_thread": False},
@@ -58,14 +59,9 @@ def client(tmp_path) -> Generator[TestClient, None, None]:
     app.dependency_overrides[get_db] = override_get_db
     app.dependency_overrides[get_current_user] = override_get_current_user
 
-    original_storage_dir = dataset_service.settings.storage_dir
-    dataset_service.settings.storage_path = str(tmp_path / "datasets")
-    dataset_service.settings.storage_dir.mkdir(parents=True, exist_ok=True)
-
     with TestClient(app) as test_client:
         yield test_client
 
-    dataset_service.settings.storage_path = str(original_storage_dir)
     app.dependency_overrides.clear()
     Base.metadata.drop_all(bind=engine, tables=[DatasetColumn.__table__, Dataset.__table__, User.__table__])
     engine.dispose()
@@ -127,7 +123,7 @@ def test_upload_dataset_rejects_invalid_csv_with_clear_message(client: TestClien
     )
 
     assert response.status_code == 400
-    assert "could not be parsed" in response.json()["detail"]
+    assert "not a valid CSV" in response.json()["detail"]
 
 
 def test_upload_dataset_requires_file(client: TestClient):
@@ -149,3 +145,62 @@ def test_upload_dataset_requires_name(client: TestClient):
 
     assert response.status_code == 422
     assert response.json()["detail"][0]["loc"] == ["body", "name"]
+
+
+def test_upload_uses_content_validation_not_filename_and_never_writes_csv(client: TestClient, tmp_path):
+    response = client.post(
+        "/api/datasets/upload",
+        data={"name": "Sales"},
+        files={"file": ("../../sensitive-not-a-path.bin", b"name,amount\nAlice,10\n", "application/octet-stream")},
+    )
+    assert response.status_code == 201
+    assert not list(tmp_path.iterdir())
+
+
+def test_upload_rejects_too_many_rows(client: TestClient, monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr(settings, "max_dataset_rows", 1)
+    response = client.post(
+        "/api/datasets/upload",
+        data={"name": "Sales"},
+        files={"file": ("sales.csv", b"name\nAlice\nBob\n", "text/csv")},
+    )
+    assert response.status_code == 413
+    assert "row limit" in response.json()["detail"]
+
+
+def test_upload_rejects_too_many_columns(client: TestClient, monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr(settings, "max_dataset_columns", 1)
+    response = client.post(
+        "/api/datasets/upload",
+        data={"name": "Sales"},
+        files={"file": ("sales.csv", b"name,amount\nAlice,10\n", "text/csv")},
+    )
+    assert response.status_code == 413
+    assert "column limit" in response.json()["detail"]
+
+
+def test_upload_rejects_too_large_before_parsing(client: TestClient, monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr(settings, "max_upload_bytes", 10)
+    response = client.post(
+        "/api/datasets/upload",
+        data={"name": "Sales"},
+        files={"file": ("sales.csv", b"name,amount\nAlice,10\n", "text/csv")},
+    )
+    assert response.status_code == 413
+    assert "byte limit" in response.json()["detail"]
+
+
+def test_upload_database_failure_rolls_back_metadata_and_dynamic_table(client: TestClient, monkeypatch: pytest.MonkeyPatch):
+    original_materialize = dataset_service.materialize_dataset_table
+
+    def fail_after_table(*args, **kwargs):
+        original_materialize(*args, **kwargs)
+        raise RuntimeError("simulated failure")
+
+    monkeypatch.setattr(dataset_service, "materialize_dataset_table", fail_after_table)
+    response = client.post(
+        "/api/datasets/upload",
+        data={"name": "Sales"},
+        files={"file": ("sales.csv", b"name,amount\nAlice,10\n", "text/csv")},
+    )
+    assert response.status_code == 500

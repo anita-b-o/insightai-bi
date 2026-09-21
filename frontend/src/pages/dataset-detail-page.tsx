@@ -1,14 +1,16 @@
 import { alpha } from "@mui/material/styles";
 import { Box, Button, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
-import { Link as RouterLink, useParams } from "react-router-dom";
+import { useState } from "react";
+import { Link as RouterLink, useNavigate, useParams } from "react-router-dom";
 
+import { ConfirmDialog } from "@next/components/ui/confirm-dialog";
 import { DataTableFrame } from "@next/components/ui/data-table";
 import { PageHeader } from "@next/components/ui/page-header";
 import { PageSurface } from "@next/components/ui/page-surface";
 import { InlineStatItem, InlineStatRow, MetricStrip, MetricStripItem, OpenSection, SectionBand, SectionBlock } from "@next/components/ui/surface-card";
 import { EmptyState, ErrorState, LoadingState } from "@next/components/ui/states";
 import { AskAIComposer } from "@next/features/ai/components/ask-ai-composer";
-import { useDatasetDetail } from "@next/features/datasets/hooks";
+import { useDeleteDataset, useDatasetDetail } from "@next/features/datasets/hooks";
 import { InsightsSection } from "@next/features/insights/components/insights-section";
 import { tokens } from "@next/theme/tokens";
 
@@ -48,8 +50,11 @@ function WorkflowRail() {
 
 export function NextDatasetDetailPage() {
   const { datasetId } = useParams();
+  const navigate = useNavigate();
   const parsedDatasetId = datasetId ? Number(datasetId) : null;
   const datasetQuery = useDatasetDetail(parsedDatasetId);
+  const deleteDatasetMutation = useDeleteDataset();
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   if (!datasetId || parsedDatasetId === null || Number.isNaN(parsedDatasetId)) {
     return (
@@ -104,6 +109,9 @@ export function NextDatasetDetailPage() {
               </Button>
               <Button component={RouterLink} to="/upload" variant="contained">
                 Upload another
+              </Button>
+              <Button color="error" variant="outlined" onClick={() => setDeleteOpen(true)}>
+                Delete dataset
               </Button>
             </Stack>
           }
@@ -213,6 +221,16 @@ export function NextDatasetDetailPage() {
           <AskAIComposer datasetId={dataset.id} />
         </SectionBand>
       </Stack>
+      <ConfirmDialog
+        open={deleteOpen}
+        title="Delete dataset?"
+        description="This permanently removes the dataset and its saved analysis history. Datasets used by a dashboard must be detached first."
+        confirmLabel="Delete dataset"
+        onCancel={() => setDeleteOpen(false)}
+        onConfirm={() => {
+          void deleteDatasetMutation.mutateAsync(dataset.id).then(() => navigate("/datasets"));
+        }}
+      />
     </PageSurface>
   );
 }

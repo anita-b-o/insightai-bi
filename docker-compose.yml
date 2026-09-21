@@ -28,8 +28,6 @@ services:
       - ./backend/.env
     ports:
       - "8000:8000"
-    volumes:
-      - app_storage:/app/storage
     depends_on:
       db:
         condition: service_healthy
@@ -69,8 +67,6 @@ services:
     container_name: insightai-bi-dashboard-refresh-worker
     env_file:
       - ./backend/.env
-    volumes:
-      - app_storage:/app/storage
     depends_on:
       db:
         condition: service_healthy
@@ -81,4 +77,3 @@ services:
 
 volumes:
   postgres_data:
-  app_storage:
