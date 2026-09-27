@@ -25,13 +25,16 @@ import {
   setStoredToken,
 } from "./storage";
 
-const DEFAULT_AUTH_RESTORE_TIMEOUT_MS = 12_000;
+const DEFAULT_AUTH_RESTORE_TIMEOUT_MS = 55_000;
+const MIN_AUTH_RESTORE_TIMEOUT_MS = 45_000;
+const MAX_AUTH_RESTORE_TIMEOUT_MS = 60_000;
 
 function readRestoreTimeout(): number {
   const configuredTimeout = Number(import.meta.env.VITE_AUTH_RESTORE_TIMEOUT_MS);
-  return Number.isFinite(configuredTimeout) && configuredTimeout > 0
-    ? configuredTimeout
-    : DEFAULT_AUTH_RESTORE_TIMEOUT_MS;
+  if (!Number.isFinite(configuredTimeout) || configuredTimeout <= 0) {
+    return DEFAULT_AUTH_RESTORE_TIMEOUT_MS;
+  }
+  return Math.min(Math.max(configuredTimeout, MIN_AUTH_RESTORE_TIMEOUT_MS), MAX_AUTH_RESTORE_TIMEOUT_MS);
 }
 
 export const AUTH_RESTORE_TIMEOUT_MS = readRestoreTimeout();
@@ -43,11 +46,25 @@ export interface SessionRestoreError {
   requestId: string | null;
 }
 
-interface AuthSession {
-  token: string | null;
-  user: SessionUser | null;
-  error: SessionRestoreError | null;
-}
+export type AuthSessionRestoreResult =
+  | {
+      outcome: "SUCCESS";
+      token: string | null;
+      user: SessionUser | null;
+      error: null;
+    }
+  | {
+      outcome: "AUTH_REJECTED";
+      token: null;
+      user: null;
+      error: null;
+    }
+  | {
+      outcome: "TRANSIENT_UNAVAILABLE";
+      token: string;
+      user: null;
+      error: SessionRestoreError;
+    };
 
 class AuthRestoreTimeoutError extends Error {
   constructor() {
@@ -166,15 +183,15 @@ function isRejectedSession(error: unknown): boolean {
   return status === 401 || status === 403;
 }
 
-export async function bootstrapAuthSession(signal?: AbortSignal): Promise<AuthSession> {
+export async function bootstrapAuthSession(signal?: AbortSignal): Promise<AuthSessionRestoreResult> {
   const currentToken = getStoredToken();
   if (!currentToken) {
-    return { token: null, user: null, error: null };
+    return { outcome: "SUCCESS", token: null, user: null, error: null };
   }
 
   try {
     const currentUser = await getCurrentUserWithDeadline(signal);
-    return { token: currentToken, user: currentUser, error: null };
+    return { outcome: "SUCCESS", token: currentToken, user: currentUser, error: null };
   } catch (error: unknown) {
     if (error instanceof AuthRestoreCancelledError || signal?.aborted) {
       throw error;
@@ -187,7 +204,7 @@ export async function bootstrapAuthSession(signal?: AbortSignal): Promise<AuthSe
         message: "Stored session was rejected by the server",
         status: toApiError(error).status,
       });
-      return { token: null, user: null, error: null };
+      return { outcome: "AUTH_REJECTED", token: null, user: null, error: null };
     }
 
     const restoreError = classifyRestoreError(error);
@@ -198,7 +215,7 @@ export async function bootstrapAuthSession(signal?: AbortSignal): Promise<AuthSe
       status: restoreError.status,
       metadata: { kind: restoreError.kind },
     });
-    return { token: currentToken, user: null, error: restoreError };
+    return { outcome: "TRANSIENT_UNAVAILABLE", token: currentToken, user: null, error: restoreError };
   }
 }
 

@@ -26,7 +26,7 @@ juntos en Vercel.
 - Output Directory: `dist`
 - Variables:
   - `VITE_API_BASE_URL=https://BACKEND.onrender.com/api`
-  - `VITE_AUTH_RESTORE_TIMEOUT_MS=12000` limita la validación inicial de `/users/me`; no configura reintentos automáticos.
+  - `VITE_AUTH_RESTORE_TIMEOUT_MS=55000` limita únicamente la validación inicial de `/users/me` para tolerar el cold start (el frontend acota el valor a 45–60 s); no cambia el timeout global ni configura reintentos automáticos.
   - `VITE_CLIENT_ERROR_ENDPOINT=` si no se usa reporte externo.
   - `VITE_SENTRY_DSN=`, `VITE_SENTRY_ENVIRONMENT=production`, `VITE_SENTRY_TRACES_SAMPLE_RATE=0` si aplica.
 
