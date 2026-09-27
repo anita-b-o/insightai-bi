@@ -6,11 +6,11 @@ export const nextAppTheme = createTheme({
   palette: {
     mode: "light",
     primary: {
-      main: tokens.color.accent.deepGreen,
+      main: tokens.color.accent.orange,
       contrastText: tokens.color.fg.inverse,
     },
     secondary: {
-      main: tokens.color.fg.primary,
+      main: tokens.color.accent.deepGreen,
       contrastText: tokens.color.fg.inverse,
     },
     success: {
@@ -36,15 +36,15 @@ export const nextAppTheme = createTheme({
     borderRadius: tokens.radius.sm,
   },
   typography: {
-    fontFamily: 'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+    fontFamily: '"Aptos", "Inter", "Segoe UI", system-ui, sans-serif',
     fontWeightMedium: 650,
-    fontWeightBold: 750,
-    h1: { fontSize: "clamp(2rem, 5vw, 3.75rem)", fontWeight: 690, lineHeight: 1.02, letterSpacing: "-0.045em" },
-    h2: { fontSize: "2.25rem", fontWeight: 700, lineHeight: 1.08, letterSpacing: "-0.035em" },
-    h3: { fontSize: "1.875rem", fontWeight: 700, lineHeight: 1.12, letterSpacing: "-0.03em" },
-    h4: { fontSize: "1.5rem", fontWeight: 700, lineHeight: 1.18, letterSpacing: "-0.025em" },
-    h5: { fontSize: "1.25rem", fontWeight: 700, lineHeight: 1.24, letterSpacing: "-0.02em" },
-    h6: { fontSize: "1rem", fontWeight: 750, lineHeight: 1.3, letterSpacing: "-0.012em" },
+    fontWeightBold: 780,
+    h1: { fontSize: "2.75rem", fontWeight: 800, lineHeight: 1.06, letterSpacing: 0 },
+    h2: { fontSize: "2.25rem", fontWeight: 800, lineHeight: 1.08, letterSpacing: 0 },
+    h3: { fontSize: "1.875rem", fontWeight: 800, lineHeight: 1.12, letterSpacing: 0 },
+    h4: { fontSize: "1.5rem", fontWeight: 780, lineHeight: 1.18, letterSpacing: 0 },
+    h5: { fontSize: "1.25rem", fontWeight: 760, lineHeight: 1.24, letterSpacing: 0 },
+    h6: { fontSize: "1rem", fontWeight: 760, lineHeight: 1.3, letterSpacing: 0 },
     body1: { fontSize: "0.95rem", lineHeight: 1.58 },
     body2: { fontSize: "0.875rem", lineHeight: 1.52 },
     subtitle1: { fontWeight: 600, lineHeight: 1.4 },
@@ -59,14 +59,15 @@ export const nextAppTheme = createTheme({
         body: {
           backgroundColor: tokens.color.bg.canvas,
           color: tokens.color.fg.primary,
-          backgroundImage: "none",
+          backgroundImage: `radial-gradient(${alpha(tokens.color.fg.primary, 0.055)} 0.7px, transparent 0.7px)`,
+          backgroundSize: "14px 14px",
           fontFeatureSettings: '"kern"',
         },
         "code, pre, kbd, samp": {
           fontFamily: '"Cascadia Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace',
         },
         "*:focus-visible": {
-          outline: `3px solid ${tokens.color.accent.signal}`,
+          outline: `3px solid ${alpha(tokens.color.accent.signal, 0.86)}`,
           outlineOffset: 2,
         },
       },
@@ -74,11 +75,11 @@ export const nextAppTheme = createTheme({
     MuiAppBar: {
       styleOverrides: {
         root: {
-          backgroundColor: tokens.color.bg.surface,
+          backgroundColor: tokens.color.bg.inverse,
           backdropFilter: "none",
-          borderBottom: `1px solid ${tokens.color.border.subtle}`,
+          borderBottom: `1px solid ${alpha(tokens.color.bg.surface, 0.18)}`,
           boxShadow: "none",
-          color: tokens.color.fg.primary,
+          color: tokens.color.fg.inverse,
         },
       },
     },
@@ -108,13 +109,13 @@ export const nextAppTheme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          minHeight: tokens.layout.controlStandard,
+          minHeight: 40,
           borderRadius: tokens.radius.sm,
           paddingInline: 13,
           boxShadow: "none",
           borderWidth: 1,
           "&:focus-visible": {
-            outline: `3px solid ${tokens.color.accent.signal}`,
+            outline: `3px solid ${alpha(tokens.color.accent.signal, 0.86)}`,
             outlineOffset: 2,
           },
         },
@@ -122,19 +123,19 @@ export const nextAppTheme = createTheme({
           boxShadow: "none",
         },
         containedPrimary: {
-          background: tokens.color.accent.deepGreen,
+          background: tokens.color.accent.orange,
           color: tokens.color.fg.inverse,
           "&:hover": {
-            background: "#074C42",
+            background: tokens.color.accent.terracotta,
           },
         },
         outlined: {
-          borderColor: tokens.color.border.strong,
+          borderColor: alpha(tokens.color.accent.deepGreen, 0.34),
           backgroundColor: tokens.color.bg.surface,
           color: tokens.color.accent.deepGreen,
           "&:hover": {
-            borderColor: tokens.color.fg.primary,
-            backgroundColor: tokens.color.bg.surfaceMuted,
+            borderColor: alpha(tokens.color.accent.deepGreen, 0.58),
+            backgroundColor: alpha(tokens.color.accent.deepGreen, 0.05),
           },
         },
       },
@@ -147,14 +148,6 @@ export const nextAppTheme = createTheme({
           height: 24,
         },
       },
-    },
-    MuiDialog: {
-      styleOverrides: {
-        paper: { border: `1px solid ${tokens.color.border.strong}`, borderRadius: tokens.radius.md, boxShadow: "none" },
-      },
-    },
-    MuiTableRow: {
-      styleOverrides: { root: { "&.MuiTableRow-hover:hover": { backgroundColor: "#F8F8F4" } } },
     },
     MuiDivider: {
       styleOverrides: {
@@ -194,7 +187,7 @@ export const nextAppTheme = createTheme({
             borderColor: alpha(tokens.color.accent.deepGreen, 0.64),
           },
           "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-            borderColor: tokens.color.accent.signal,
+            borderColor: tokens.color.accent.deepGreen,
             borderWidth: 2,
           },
         },

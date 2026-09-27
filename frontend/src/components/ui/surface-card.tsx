@@ -31,12 +31,13 @@ export function SurfaceCard({
   const toneStyles = {
     panel: {
       backgroundColor: tokens.color.bg.surface,
-      border: `1px solid ${tokens.color.border.subtle}`,
+      border: `1px solid ${alpha(tokens.color.border.strong, 0.42)}`,
+      borderTop: `2px solid ${alpha(tokens.color.accent.deepGreen, 0.42)}`,
       borderRadius: tokens.radius.md,
     },
     well: {
-      backgroundColor: tokens.color.bg.surfaceMuted,
-      border: `1px solid ${tokens.color.border.subtle}`,
+      backgroundColor: alpha(tokens.color.bg.surfaceMuted, 0.7),
+      border: `1px solid ${alpha(tokens.color.border.subtle, 0.92)}`,
       borderRadius: tokens.radius.sm,
     },
     quiet: {
@@ -45,9 +46,9 @@ export function SurfaceCard({
       borderRadius: 0,
     },
     hero: {
-      backgroundColor: tokens.color.bg.surface,
+      backgroundColor: alpha(tokens.color.bg.surface, 0.82),
       borderTop: `1px solid ${tokens.color.border.subtle}`,
-        borderBottom: `1px solid ${tokens.color.border.subtle}`,
+      borderBottom: `1px solid ${alpha(tokens.color.border.strong, 0.34)}`,
       borderLeft: "none",
       borderRight: "none",
       borderRadius: 0,

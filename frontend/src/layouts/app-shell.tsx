@@ -18,9 +18,11 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import { alpha } from "@mui/material/styles";
 import { useMemo, useState } from "react";
 import { Link as RouterLink, Outlet, useLocation } from "react-router-dom";
 
+import { GeoPattern } from "@next/components/brand/geo-pattern";
 import { InsightBrand } from "@next/components/brand/insight-brand";
 import { useAuth } from "@next/core/auth/session";
 import { tokens } from "@next/theme/tokens";
@@ -39,7 +41,7 @@ function AppNavigation({ onNavigate }: { onNavigate?: () => void }) {
 
   return (
     <Stack spacing={1.25} sx={{ flexShrink: 0 }}>
-      <InsightBrand />
+      <InsightBrand tone="inverse" />
       <List disablePadding sx={{ display: "grid", gap: 0.5 }}>
         {navigationItems.map((item) => {
           const selected = location.pathname === item.to || location.pathname.startsWith(`${item.to}/`);
@@ -51,16 +53,16 @@ function AppNavigation({ onNavigate }: { onNavigate?: () => void }) {
               selected={selected}
               onClick={onNavigate}
               sx={{
-                borderRadius: 0,
+                borderRadius: tokens.radius.xs,
                 alignItems: "center",
-                color: selected ? tokens.color.accent.deepGreen : tokens.color.fg.secondary,
-                backgroundColor: selected ? tokens.color.bg.surfaceMuted : "transparent",
-                borderLeft: selected ? `2px solid ${tokens.color.accent.deepGreen}` : "2px solid transparent",
+                color: alpha(tokens.color.fg.inverse, selected ? 1 : 0.78),
+                backgroundColor: selected ? alpha(tokens.color.bg.surface, 0.12) : "transparent",
+                borderLeft: selected ? `3px solid ${tokens.color.accent.signal}` : "3px solid transparent",
                 "&:hover": {
-                  backgroundColor: tokens.color.bg.surfaceMuted,
+                  backgroundColor: alpha(tokens.color.bg.surface, 0.1),
                 },
                 "& .MuiListItemIcon-root": {
-                  color: selected ? tokens.color.accent.deepGreen : tokens.color.fg.secondary,
+                  color: alpha(tokens.color.fg.inverse, selected ? 1 : 0.72),
                 },
               }}
             >
@@ -95,13 +97,14 @@ export function NextAppShell() {
         height: "100%",
         p: 2,
         position: "relative",
-        backgroundColor: tokens.color.bg.surface,
-        color: tokens.color.fg.primary,
+        background: `linear-gradient(180deg, ${tokens.color.bg.inverse} 0%, #064232 100%)`,
+        color: tokens.color.fg.inverse,
         display: "flex",
         flexDirection: "column",
         overflow: "hidden",
       }}
     >
+      <GeoPattern inverted density="quiet" sx={{ opacity: 0.09 }} />
       <Box
         sx={{
           position: "relative",
@@ -120,12 +123,12 @@ export function NextAppShell() {
       <Stack spacing={2} sx={{ position: "relative", zIndex: 1, flexShrink: 0, mt: "auto" }}>
         <Divider />
         <Stack direction="row" spacing={1.5} alignItems="center">
-          <Avatar sx={{ bgcolor: tokens.color.bg.surfaceMuted, color: tokens.color.accent.deepGreen }}>{initials}</Avatar>
+          <Avatar sx={{ bgcolor: alpha(tokens.color.bg.surface, 0.14), color: tokens.color.fg.inverse }}>{initials}</Avatar>
           <Box sx={{ minWidth: 0 }}>
             <Typography variant="subtitle2" noWrap>
               {user?.full_name ?? "Workspace user"}
             </Typography>
-            <Typography variant="body2" color="text.secondary" noWrap>
+            <Typography variant="body2" sx={{ color: alpha(tokens.color.fg.inverse, 0.66) }} noWrap>
               {user?.email ?? "No email"}
             </Typography>
           </Box>
@@ -135,9 +138,9 @@ export function NextAppShell() {
           startIcon={<LogoutRoundedIcon />}
           onClick={logout}
           sx={{
-            color: tokens.color.fg.primary,
-            borderColor: tokens.color.border.strong,
-            backgroundColor: tokens.color.bg.surface,
+            color: tokens.color.fg.inverse,
+            borderColor: alpha(tokens.color.bg.surface, 0.18),
+            backgroundColor: "transparent",
           }}
         >
           Logout
@@ -166,7 +169,7 @@ export function NextAppShell() {
             height: 56,
             alignItems: "center",
             px: 1.25,
-            backgroundColor: tokens.color.bg.surface,
+            backgroundColor: tokens.color.bg.canvas,
             borderBottom: `1px solid ${tokens.color.border.subtle}`,
           }}
         >
