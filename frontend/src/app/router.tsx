@@ -209,7 +209,14 @@ export function AppRouter() {
             <Route path="dashboards" element={<DashboardsPage />} />
             <Route path="dashboards/:dashboardId" element={<DashboardDetailPage />} />
           </Route>
-          <Route path="*" element={<NotFoundPage />} />
+          <Route
+            path="*"
+            element={
+              <NextPublicLayout framed={false}>
+                <NotFoundPage />
+              </NextPublicLayout>
+            }
+          />
         </Routes>
       </Suspense>
     </BrowserRouter>

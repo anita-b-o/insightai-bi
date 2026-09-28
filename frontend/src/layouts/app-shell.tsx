@@ -24,6 +24,7 @@ import { Link as RouterLink, Outlet, useLocation } from "react-router-dom";
 
 import { GeoPattern } from "@next/components/brand/geo-pattern";
 import { InsightBrand } from "@next/components/brand/insight-brand";
+import { AppFooter } from "@next/components/ui/app-footer";
 import { useAuth } from "@next/core/auth/session";
 import { tokens } from "@next/theme/tokens";
 
@@ -219,8 +220,20 @@ export function NextAppShell() {
               overflowY: "auto",
             }}
           >
-            <Box sx={{ width: "100%", maxWidth: tokens.layout.appMaxWidth, mx: "auto" }}>
-              <Outlet />
+            <Box
+              sx={{
+                width: "100%",
+                maxWidth: tokens.layout.appMaxWidth,
+                minHeight: "100%",
+                mx: "auto",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <Box sx={{ flex: 1 }}>
+                <Outlet />
+              </Box>
+              <AppFooter />
             </Box>
           </Box>
         </Box>

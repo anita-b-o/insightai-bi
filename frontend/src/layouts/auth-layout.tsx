@@ -3,6 +3,7 @@ import { Box, Stack, Typography } from "@mui/material";
 
 import { GeoPattern } from "@next/components/brand/geo-pattern";
 import { InsightBrand } from "@next/components/brand/insight-brand";
+import { AppFooter } from "@next/components/ui/app-footer";
 import { NextThemeBoundary } from "./theme-boundary";
 import { tokens } from "@next/theme/tokens";
 
@@ -49,8 +50,11 @@ export function NextAuthLayout({ children }: { children: ReactNode }) {
           </Typography>
         </Box>
 
-        <Stack spacing={2.35} sx={{ width: "100%", maxWidth: 520, alignSelf: "center", justifySelf: "center" }}>
-          <Box sx={{ maxWidth: 460, width: "100%" }}>{children}</Box>
+        <Stack sx={{ width: "100%", maxWidth: 520, height: "100%", justifySelf: "center" }}>
+          <Box sx={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <Box sx={{ maxWidth: 460, width: "100%" }}>{children}</Box>
+          </Box>
+          <AppFooter />
         </Stack>
       </Box>
     </NextThemeBoundary>
